@@ -88,25 +88,25 @@ const Routes = ({ children }) => {
           children: [
             {
               index: true,
-              element: <Dashboard />,
+              element: <AdminRoute><Dashboard /></AdminRoute>,
             },
               {
               path: 'dashboard',
-              element: <AdminDashboard ><Dashboard /></AdminDashboard>,
+              element: <AdminRoute><Dashboard /></AdminRoute>,
             },
             {
               path: 'users',
-              element: <AdminDashboard ><Users /></AdminDashboard>,
+              element: <AdminRoute><Users /></AdminRoute>,
             },
             {
           path: 'basic-site-settings',
-          element: <AdminDashboard ><BasicSiteSettings /></AdminDashboard>,
+          element: <AdminRoute><BasicSiteSettings /></AdminRoute>,
         },
             {
               path: 'main-navigation-top/edit',
               
               element:
-        <AdminDashboard ><MenuUpdate menuTitle="Main Navigation Top" /> </AdminDashboard>,
+        <AdminRoute><MenuUpdate menuTitle="Main Navigation Top" /></AdminRoute> ,
               loader: async () => {
                 let menuGetResponse = getMenuData("Main Navigation Top");
                 return menuGetResponse;
@@ -115,7 +115,7 @@ const Routes = ({ children }) => {
             },
             {
               path: 'main-navigation-bottom/edit',
-              element: <AdminDashboard ><MenuUpdate menuTitle="Main Navigation Bottom" /></AdminDashboard>,
+              element: <AdminRoute><MenuUpdate menuTitle="Main Navigation Bottom" /></AdminRoute>,
               loader: async () => {
                 let menuGetResponse = getMenuData("Main Navigation Bottom");
                 return menuGetResponse;
