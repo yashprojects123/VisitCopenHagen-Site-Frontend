@@ -1,0 +1,23 @@
+.social-links-wrapper{
+        background: #2D8649;
+        color: #fff;
+        display: grid;
+        place-content: center;
+        padding: 22px 0;
+        p{
+                margin: 0;
+        }
+        .social-links {
+                display: flex;
+                gap: 5px;
+                align-items: center;
+                svg{
+                        font-size: 20px;
+                        margin:0 7px;
+                        background: transparent !important;
+                        path{
+                                fill: #fff !important;
+                        }
+                }
+        }
+}

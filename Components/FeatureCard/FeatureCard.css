@@ -1,0 +1,46 @@
+.feature-card {
+  flex: 1 1 386px;
+  position: relative;
+  img {
+    width: 100%;
+  }
+
+  .title-and-caption-wrapper {
+    position: relative;
+    bottom: 50px;
+    max-width: 89%;
+    margin: auto;
+    .title {
+      text-align: left;
+      color: rgb(7, 32, 59);
+      word-break: break-word;
+      display: inline-block;
+      font-size: 28px;
+      margin: 0px;
+      padding: 20px;
+      position: relative;
+      font-weight: bold;
+      letter-spacing: 0px;
+      line-height: 1.1;
+      background: #c6f6dd;
+    }
+    .caption {
+      color: #000;
+      text-align: left;
+      font-size: 12px;
+      padding: 5px 10px 5px 0px;
+    }
+  }
+  .location {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    border-bottom-left-radius: 0.5rem;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0px;
+    line-height: 11px;
+    padding: .5rem;
+  }
+}

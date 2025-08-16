@@ -1,0 +1,7 @@
+.feature-section{
+        background: #fff !important;
+        .feature-list{
+                display: flex;
+                gap: 40px;
+        }
+}

@@ -1,0 +1,30 @@
+.footer-wrapper{
+
+.footer-menu {
+        padding-top: 35px;
+        ul{
+                flex-direction: column;
+                padding: 0;
+                li{
+                        margin: 6px 0 !important;
+                       &:last-child{
+                        margin-bottom: 0 !important;
+                       }
+                }
+        }
+}
+.footer-bottom{
+    border-top: 2px solid rgb(231, 234, 236);
+    padding: 15px 0px;
+    margin-top: 40px;
+    p,a{
+        color: #000;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    a{
+        color: #000;
+    }
+}
+}

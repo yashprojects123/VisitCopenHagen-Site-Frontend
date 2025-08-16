@@ -1,0 +1,39 @@
+.hobby-card-wrapper {
+    flex: 1 1 280px;
+    position: relative;
+    &:hover{
+        .card-overlay{
+                background:rgba(45, 134, 73, 0.438);
+        }
+        .title {
+          transform: translateY(-10px);
+        }
+    }
+    a{
+        display: block;;
+       height: 100%;
+       width: 100%;
+    }
+
+    .title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 100%;
+    white-space: normal;
+    transition: .2s all ease-in-out;
+    padding: 0 1rem;
+}
+}
+
+.card-overlay {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    background:none;
+    transition: .8s all ease;
+    display: grid;
+    place-content: center;
+}
+

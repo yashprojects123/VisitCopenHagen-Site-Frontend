@@ -1,0 +1,234 @@
+.dashboard-v3-container {
+  min-height: 100vh;
+  padding: 50px 30px; /* More generous padding */
+  max-width: 1300px; /* Wider max-width */
+  margin: 0 auto;
+}
+ 
+.dashboard-v3-title {
+  font-size: 44px;
+  font-weight: 800;
+  color: #212529;
+  text-align: center;
+  margin-bottom: 60px; /* Increased margin */
+  position: relative;
+  letter-spacing: -0.5px;
+}
+ 
+.dashboard-v3-title::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; /* Adjust line position */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px; /* Wider accent line */
+  height: 5px; /* Thicker accent line */
+  background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); /* Gradient accent */
+  border-radius: 3px;
+}
+ 
+/* Main Statistics Grid */
+.stats-v3-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 30px; /* Consistent gap */
+  margin-bottom: 50px;
+}
+ 
+@media (min-width: 640px) { /* Tablet breakpoint */
+  .stats-v3-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+ 
+@media (min-width: 1024px) { /* Desktop breakpoint */
+  .stats-v3-grid {
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for stats */
+  }
+}
+ 
+.stat-v3-card {
+  background-color: #ffffff;
+  border-radius: 18px; /* More rounded corners */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); /* Soft, prominent shadow */
+  padding: 30px;
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  align-items: flex-start; /* Align content to the start */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e9ecef; /* Subtle border */
+}
+ 
+.stat-v3-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+ 
+.stat-v3-icon-wrapper {
+  padding: 15px;
+  border-radius: 12px; /* Square-ish rounded icon background */
+  margin-bottom: 20px;
+  color: #fff; /* Icons are white */
+}
+ 
+/* Accent Colors for Stat Cards */
+.accent-blue .stat-v3-icon-wrapper { background-color: #007bff; }
+.accent-green .stat-v3-icon-wrapper { background-color: #28a745; }
+.accent-red .stat-v3-icon-wrapper { background-color: #dc3545; }
+.accent-purple .stat-v3-icon-wrapper { background-color: #6f42c1; }
+ 
+.stat-v3-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6c757d; /* Muted label color */
+  margin-bottom: 8px;
+}
+ 
+.stat-v3-value {
+  font-size: 38px; /* Larger value */
+  font-weight: 700;
+  color: #212529;
+  margin-right: 15px; /* Space between value and change */
+}
+ 
+.stat-v3-change {
+  font-size: 15px;
+  font-weight: 600;
+}
+ 
+.stat-v3-change-up {
+  color: #28a745; /* Green for up */
+}
+ 
+.stat-v3-change-down {
+  color: #dc3545; /* Red for down */
+}
+ 
+/* Content & Activity Grid */
+.content-activity-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+ 
+@media (min-width: 1024px) { /* Desktop breakpoint */
+  .content-activity-grid {
+    grid-template-columns: 1fr 1.5fr; /* Top Content on left, Activity on right */
+  }
+}
+ 
+.panel {
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 35px; /* Generous panel padding */
+  border: 1px solid #e9ecef;
+}
+ 
+.panel-title {
+  font-size: 26px; /* Larger panel titles */
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 30px; /* More space below title */
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dee2e6; /* Separator line */
+}
+ 
+/* Top Content List */
+.content-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ 
+.content-item {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+ 
+.content-item:last-child {
+  border-bottom: none;
+}
+ 
+.content-title {
+  font-weight: 600;
+  color: #007bff; /* Blue for titles */
+  flex-basis: 100%; /* Take full width on small screens */
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+ 
+@media (min-width: 768px) {
+  .content-title {
+    flex-basis: auto;
+    margin-bottom: 0;
+  }
+}
+ 
+.content-views {
+  font-size: 14px;
+  color: #6c757d;
+  margin-right: 15px;
+}
+ 
+.content-author {
+  font-size: 14px;
+  color: #6c757d;
+  font-style: italic;
+}
+ 
+/* Latest User Activity Feed */
+.activity-feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ 
+.activity-feed-item {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping */
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+ 
+.activity-feed-item:last-child {
+  border-bottom: none;
+}
+ 
+.activity-user {
+  font-weight: 700;
+  color: #212529;
+  margin-right: 8px;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+ 
+.activity-action {
+  color: #495057;
+  font-style: italic;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+ 
+.activity-item-name {
+  font-weight: 600;
+  color: #007bff;
+  flex-grow: 1; /* Allow to take space */
+  margin-right: 8px;
+}
+ 
+.activity-time-ago {
+  font-size: 13px;
+  color: #868e96;
+  text-align: right;
+  flex-shrink: 0;
+}
+ 
+/* General Link/Text Color Adjustments for SVGs */
+.lucide {
+  color: currentColor; /* Ensures SVG icon inherits parent's color */
+}
