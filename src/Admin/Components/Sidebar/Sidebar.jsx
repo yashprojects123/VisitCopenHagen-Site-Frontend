@@ -13,7 +13,7 @@ const Sidebar = () => {
                                 title: 'My Account',
                         },
                         {
-                                url: '/',
+                                url: '/logout',
                                 title: 'Logout'
                         },
                 ]

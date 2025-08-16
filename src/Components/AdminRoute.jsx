@@ -12,7 +12,7 @@ const AdminRoute = ({ children }) => {
   useEffect(() => {
     const checkAdmin = async () => {
       const token = localStorage.getItem("accessToken");
-
+      console.log("Admin Route Token:", token);
       // No token → show toast and redirect to home after 1.5s
       if (!token) {
         toast.error("Unauthorized: Please login as admin");
@@ -30,7 +30,9 @@ const AdminRoute = ({ children }) => {
           }
         );
 
+
         const user = res.data?.user;
+        console.log("User Data after checking adminroute:", user);
         const isAuthenticated = res.data?.isAuthenticated;
 
         if (isAuthenticated && user?.role === "admin") {
