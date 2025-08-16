@@ -1,0 +1,102 @@
+.user-management-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+
+ 
+.title {
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+ 
+.user-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+ 
+.user-table thead tr {
+  background-color: #eef2f7;
+  color: #555;
+}
+ 
+.user-table th, .user-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+ 
+.user-table tbody tr:hover {
+  background-color: #f9fbfd;
+  cursor: pointer;
+}
+ 
+.user-table tbody tr:last-child td {
+  border-bottom: none;
+}
+ 
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+ 
+.actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+ 
+.view-btn {
+  background-color: #4a90e2;
+  color: white;
+}
+ 
+.update-btn {
+  background-color: #50bda1;
+  color: white;
+}
+ 
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+ 
+.actions button:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+ 
+.role-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 15px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+ 
+.role-badge.admin {
+  background-color: #e74c3c;
+}
+ 
+.role-badge.editor {
+  background-color: #f39c12;
+}
+ 
+.role-badge.user {
+  background-color: #3498db;
+}
+
+}

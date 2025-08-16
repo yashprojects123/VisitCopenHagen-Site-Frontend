@@ -1,0 +1,8 @@
+@media screen and (max-width:767px) {
+    .admin-sidebar{
+        display: none;
+    }
+    .admin-content{
+        margin: 0 !important;
+    }
+}

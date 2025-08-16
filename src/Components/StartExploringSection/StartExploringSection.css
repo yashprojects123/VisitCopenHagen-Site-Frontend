@@ -1,0 +1,12 @@
+.start-exploring-section{
+        background: #FFECBB !important;
+        .section-heading, .section-description, .description{
+                color: rgb(25,63,15) !important;
+        }
+        .explore-cards{
+                display: flex;
+                gap: 40px;
+                flex-wrap: wrap;
+                margin: auto;
+        }
+}

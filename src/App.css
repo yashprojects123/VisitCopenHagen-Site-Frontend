@@ -1,0 +1,99 @@
+@import './Components/Banner/Banner.css';
+@media screen and (min-width: 1400px) {
+  .container-xxl,
+  .container-xl,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 1450px !important;
+  }
+}
+.page-title {
+    font-size: 1.8rem;
+    margin: 1rem 0;
+    font-weight: 700;
+}
+.main-content {
+  min-height: 80dvh;
+}
+.scale-animate {
+  transition: 0.3s all ease-in-out;
+}
+.scale-animate:hover {
+  transform: scale(1.1);
+}
+
+.inner-container {
+  max-width: 1240px !important;
+  margin: auto;
+}
+
+.no-overflow {
+  overflow: hidden;
+}
+
+.skeleton-banner {
+  background-color: #f4f4f4;
+  position: relative;
+  .images {
+    display: flex;
+    gap: 10px;
+    > div {
+      flex: 1 1 45%;
+      width: 45%;
+      height: 630px;
+      background-color: #ddd;
+      animation: shimmer 1.5s infinite linear;
+    }
+  }
+}
+
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.admin-dashboard{
+  
+.admin-content {
+    margin-top: 5rem;
+    margin-left: 300px;
+    padding: 45px;
+    min-height: 80dvh;
+    .page-title{
+      color: #071437;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+}
+
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07d3f75d;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #0e78dbb2;
+  border-radius: 10px;
+  border: 2px solid #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+

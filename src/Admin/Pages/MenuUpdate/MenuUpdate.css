@@ -1,0 +1,177 @@
+.menu-update-page{
+        width:100%;
+        
+/* Form Container */
+form {
+  background-color: #ffffff;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
+  width: 100%;
+  max-width: 550px; /* Slightly wider form */
+  border: 1px solid #e2e8f0;
+}
+}
+
+.menu-update-and-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  >form,>div{
+        flex:1 1;
+  }
+}
+
+.menu-links-fieldset fieldset {
+    border: 1px solid skyblue;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    animation-name: fromBottom;
+    animation-duration: 1s;
+}
+@keyframes fromBottom {
+  from{
+    transform: translateY(20px);
+  }
+  to{
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Form Group (for labels and inputs) */
+.form-group {
+  margin-bottom: 22px;
+}
+
+/* Text Inputs and Textarea */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 14px 18px; /* More padding */
+  border: 1px solid #cbd5e0; /* Light gray border */
+  border-radius: 10px; /* More rounded corners */
+  font-size: 1.05rem; /* Slightly larger text */
+  color: #2d3748; /* Darker gray text */
+  box-sizing: border-box;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); /* Blue glow on focus */
+}
+
+
+
+/* Fieldset for Menu Links */
+.menu-links-fieldset {
+    border: 1px solid #cbd5e0;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    background-color: #f8fafc;
+    height: 46dvh;
+    overflow: auto;
+}
+
+.menu-links-fieldset legend {
+  font-size: 1.25rem; /* Larger legend */
+  font-weight: 700; /* Bold */
+  color: #334155;
+  padding: 0 12px;
+  margin-left: -12px;
+}
+
+button.add-link-button {
+    padding: .5rem .8rem;
+    border: none;
+    border-radius: .5rem;
+    background: #4343eb;
+    color: #fff;
+    font-weight: 600;
+    transition: .5s all ease-in-out;
+    margin-top: .5rem;
+    &:hover{
+      opacity:.7;
+    }
+}
+ label{
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+.menu-link-item{
+  display: flex;
+  flex-direction: column;
+  gap:1rem;
+  margin-bottom: 1rem;
+ 
+  input{
+    padding: .5rem;
+    border:1px solid rgba(0, 191, 255, 0.349);
+    font-weight: 500;
+  }
+}
+.menu-link-item >div {
+  display: flex;
+  flex-direction: column;
+  gap:5px;
+}
+
+
+
+/* Submit Button */
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 10px 30px; /* Larger button */
+  background: linear-gradient(
+    to right,
+    #4c8bf5,
+    #6a5acd
+  ); /* More vibrant gradient */
+  color: #ffffff;
+  font-size: 1.25rem; /* Larger font */
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(76, 139, 245, 0.4); /* More prominent shadow */
+}
+
+.submit-button:hover {
+  background: linear-gradient(
+    to right,
+    #3b73d1,
+    #5242b5
+  ); /* Darker gradient on hover */
+  box-shadow: 0 12px 25px rgba(76, 139, 245, 0.5);
+  transform: translateY(-3px); /* More pronounced lift */
+}
+
+.submit-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(76, 139, 245, 0.3);
+}
+
+.delete-btn{
+      padding: .5rem .8rem;
+    border: none;
+    border-radius: .5rem;
+    background: #fa521f;
+    color: #fff;
+    font-weight: 600;
+    transition: .5s all ease-in-out;
+    &:hover{
+      opacity:.7;
+    }
+}
