@@ -14,7 +14,7 @@ const UserAccountDropdown = () => {
 	const BasicSettingsContextObj = useContext(BasicSettingsContext);
 	const userAuthenticated = BasicSettingsContextObj && BasicSettingsContextObj.isAuthenticated;
 	const setIsAuthenticated = BasicSettingsContextObj && BasicSettingsContextObj.setIsAuthenticated;
-	console.log("User Authenticated:", userAuthenticated);
+
 	// Close dropdown on click outside
 	useEffect(() => {
 		const handleClickOutside = (event) => {
@@ -43,7 +43,7 @@ const UserAccountDropdown = () => {
 			}
 			if (!userId) {
 				setIsAuthenticated(false);
-				console.error("user ID not found in token");
+				
 			}else{
 						setCurrentUserId(userId);
 							try {

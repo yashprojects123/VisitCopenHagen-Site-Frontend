@@ -53,7 +53,7 @@ const Sidebar = () => {
         return (
                 <div className="admin-sidebar">
                         <Logo />
-                        <Menu menulinks={[{ url: '/admin/dashboard', title: 'Dashboard' }, { url: '/admin/basic-site-settings', title: 'Basic site settings' }, { url: '/admin/users', title: 'Users' }]} />
+                        <Menu menulinks={[{ url: '/admin/dashboard', title: 'Dashboard' }, { url: '/admin/basic-site-settings', title: 'Basic site settings' }, { url: '/admin/users', title: 'Users' }, { url: '/admin/add/new-page', title: 'Add new page' }]} />
                         <Menu defaultOpen={accountMenu.defaultOpen} className="admin-account-menu" menuTitle={accountMenu.menuTitle} toggle='true' menulinks={accountMenu.menuLinks} />
                         <Menu className="main-navigation-action" menuTitle={userMainMenuAction.menuTitle} toggle='true' menulinks={userMainMenuAction.menuLinks} />
                         <Menu className="admin-explore-post-action" menuTitle={explorePostMenu.menuTitle} toggle='true' menulinks={explorePostMenu.menuLinks} />

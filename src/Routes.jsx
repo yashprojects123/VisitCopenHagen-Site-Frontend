@@ -23,6 +23,8 @@ import EatAndDrinks from './Pages/EatAndDrinks/EatAndDrinks';
 import CityAreas from './Pages/CityAreas/CityAreas';
 import Planning from './Pages/Planning/Planning';
 import Activities from './Pages/Activities/Activities';
+import AddDynamicPage from './Admin/Pages/AddDynamicPage/AddDynamicPage';
+import AuthorizedMessage from './Pages/AuthForm/AuthorizedMessage';
  
 const Routes = ({ children }) => {
  
@@ -82,49 +84,56 @@ const Routes = ({ children }) => {
           path: '/search',
           element: <SearchResultPage />,
         },
-        {
-          path: '/admin',
-          element: <AdminRoute><AdminDashboard /></AdminRoute>,
-          children: [
-            {
-              index: true,
-              element: <AdminRoute><Dashboard /></AdminRoute>,
-            },
-              {
-              path: 'dashboard',
-              element: <AdminRoute><Dashboard /></AdminRoute>,
-            },
-            {
-              path: 'users',
-              element: <AdminRoute><Users /></AdminRoute>,
-            },
-            {
-          path: 'basic-site-settings',
-          element: <AdminRoute><BasicSiteSettings /></AdminRoute>,
+         {
+          path: '/unauthorized',
+          element: <AuthorizedMessage />,
         },
-            {
-              path: 'main-navigation-top/edit',
-              
-              element:
-        <AdminRoute><MenuUpdate menuTitle="Main Navigation Top" /></AdminRoute> ,
-              loader: async () => {
-                let menuGetResponse = getMenuData("Main Navigation Top");
-                return menuGetResponse;
-              },
-              errorElement: <ErrorPage/>
-            },
-            {
-              path: 'main-navigation-bottom/edit',
-              element: <AdminRoute><MenuUpdate menuTitle="Main Navigation Bottom" /></AdminRoute>,
-              loader: async () => {
-                let menuGetResponse = getMenuData("Main Navigation Bottom");
-                return menuGetResponse;
-              },
-              
-              errorElement: <ErrorPage/>
-            },
-          ]
-        }
+     {
+          path: '/admin',
+          element: <AdminRoute><AdminDashboard /></AdminRoute>, // 👈 Wrap the parent element here
+          children: [
+            {
+              index: true,
+              element: <Dashboard />,
+            },
+              {
+              path: 'dashboard',
+              element: <Dashboard />,
+            },
+            {
+              path: 'users',
+              element: <Users />,
+            },
+            {
+          path: 'basic-site-settings',
+          element: <BasicSiteSettings />,
+        },
+        {
+              path: 'add/new-page',
+              element: <AddDynamicPage/>,
+            },
+            {
+              path: 'main-navigation-top/edit',
+              
+              element: <MenuUpdate menuTitle="Main Navigation Top" />, // 👈 Remove the wrapper here
+              loader: async () => {
+                let menuGetResponse = getMenuData("Main Navigation Top");
+                return menuGetResponse;
+              },
+              errorElement: <ErrorPage/>
+            },
+            {
+              path: 'main-navigation-bottom/edit',
+              element: <MenuUpdate menuTitle="Main Navigation Bottom" />, // 👈 Remove the wrapper here
+              loader: async () => {
+                let menuGetResponse = getMenuData("Main Navigation Bottom");
+                return menuGetResponse;
+              },
+              
+              errorElement: <ErrorPage/>
+            },
+          ]
+        }
       ]
     }
   ]);

@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import './Menu.css'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 const Menu = ({menuTitle, menulinks,className,toggle,defaultOpen}) => {
-  console.log("menulinks")
-                console.log(menulinks)
   let location = useLocation();
   let [toggleMenuOpen, setToggleMenuOpen] = useState(false);
   let toggleMenuRef= useRef();

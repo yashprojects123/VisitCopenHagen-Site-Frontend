@@ -1,8 +1,7 @@
-import axios from "axios";
-
+import { publicApi } from "../Services/axiosInstance.js"; 
 export const fetchSiteSettings = async (siteKey = "VisitCopenhagen") => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/getSettings?siteKey=${siteKey}`);
+    const response = await publicApi.get(`/api/getSettings?siteKey=${siteKey}`);
     console.log("Response from fetchSiteSettings:", response.data);
     if (response.data != null) {
       return {

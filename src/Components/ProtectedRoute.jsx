@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import {api} from "../Services/axiosInstance"; // 👈 Import the centralized axios instance
 import AuthorizedMessage from "../Pages/AuthForm/AuthorizedMessage";
-import Loader from "./Loader/Loader"; // optional spinner component
+import Loader from "./Loader/Loader";
 
 const ProtectedRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,50 +13,37 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("accessToken");
+      // Allow access to the login page without an authentication check
+      if (location.pathname === "/login") {
+        setIsLoading(false);
+        return;
+      }
 
-      // If no token and trying to access protected route, redirect
-      if (!token && location.pathname !== "/login") {
+      const token = localStorage.getItem("accessToken");
+      
+      if (!token) {
+        setIsAuthenticated(false);
         navigate("/login", { replace: true });
         setIsLoading(false);
         return;
       }
 
       try {
-        if (token) {
-          const res = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/api/check-auth`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-              withCredentials: true,
-            }
-          );
-
-          if (res.data?.isAuthenticated) {
-            setIsAuthenticated(true);
-
-            // Refresh token if provided
-            if (res.data.accessToken) {
-              localStorage.setItem("accessToken", res.data.accessToken);
-              axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.accessToken}`;
-            }
-
-            // If user is on login page, redirect to home
-            if (location.pathname === "/login") {
-              toast("Already logged in");
-              navigate("/", { replace: true });
-            }
-          } else {
-            setIsAuthenticated(false);
-          }
-        }
-      } catch (err) {
-        // Token invalid or expired
-        localStorage.removeItem("accessToken");
-        setIsAuthenticated(false);
-        if (location.pathname !== "/login") {
+        // Use the 'api' instance, which automatically adds the token and handles refresh
+        const res = await api.get("/api/check-auth");
+        
+        if (res.data?.isAuthenticated) {
+          setIsAuthenticated(true);
+        } else {
+          // This else block handles unexpected responses where the token is valid but isAuthenticated is false
+          setIsAuthenticated(false);
+          toast.error("Authentication failed. Please login again.");
           navigate("/login", { replace: true });
         }
+      } catch (err) {
+        // The interceptor handles the 401 (token invalid/expired) by refreshing or redirecting.
+        // For any other unexpected error, we'll assume the user is not authenticated.
+        setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }
@@ -65,19 +52,23 @@ const ProtectedRoute = ({ children }) => {
     checkAuth();
   }, [location.pathname, navigate]);
 
-  if (isLoading) return <Loader />; 
+  // Handle rendering logic
+  if (isLoading) {
+    return <Loader />;
+  }
 
+  // If the user is authenticated, render the children
+  if (isAuthenticated) {
+    return children;
+  }
+
+  // If the user is on the login page and not authenticated, render it
   if (!isAuthenticated && location.pathname === "/login") {
-    return children; // allow login page
+    return children;
   }
-
-  if (!isAuthenticated && location.pathname !== "/login") {
-    return (
-      <AuthorizedMessage message="Unauthorized: Please login to access this page." />
-    );
-  }
-
-  return children; // render protected page
+  
+  // For all other cases, show an unauthorized message
+  return <AuthorizedMessage message="Unauthorized: Please login to access this page." />;
 };
 
 export default ProtectedRoute;

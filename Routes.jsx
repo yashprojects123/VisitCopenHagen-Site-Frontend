@@ -23,14 +23,15 @@ import EatAndDrinks from './Pages/EatAndDrinks/EatAndDrinks';
 import CityAreas from './Pages/CityAreas/CityAreas';
 import Planning from './Pages/Planning/Planning';
 import Activities from './Pages/Activities/Activities';
+import { api } from './src/Services/axiosInstance'
  
 const Routes = ({ children }) => {
  
-  const getMenuData = async(menuKey) =>{
-        const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/admin/menu?menuKey=${menuKey}`;
-        const response = await axios.get(apiUrl);
-        return response.data;
-  }
+const getMenuData = async(menuKey) =>{
+  const apiUrl = `/api/admin/menu?menuKey=${menuKey}`;
+  const response = await api.get(apiUrl); // Use the 'api' instance here
+  return response.data;
+};
 
   let routes = createBrowserRouter([
     {
