@@ -6,7 +6,6 @@ const Banner = ({ className, image1, image2, mainTitle, caption, subTitle, descr
         return (
                 <div className={`banner-section-wrapper ${className}`}>
                         <div className="container">
-
                                 <div className='banner-content'>
                                         {(image1 && image2) ?
                                                 <div className="images">

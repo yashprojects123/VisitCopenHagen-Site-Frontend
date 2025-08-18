@@ -8,6 +8,7 @@ import Button from "../Button/Button";
 import SearchBox from "../SearchBox/SearchBox";
 import axios from "axios";
 import UserAccountDropdown from "../UserAccountDropdown/UserAccountDropdown";
+import Loader from "../Loader/Loader";
 
 const Header = () => {
   const headerRef = useRef();
@@ -118,7 +119,7 @@ const Header = () => {
             <div className="col-sm-10 header-right">
               <div className="header-top">
                 {loadingTopMenu ? (
-                  <p>Loading...</p>
+                  <Loader/>
                 ) : (
                   <Menu menulinks={headerMenuTop} className="header-top-menu" />
                 )}
@@ -127,7 +128,7 @@ const Header = () => {
                 <div className="row">
                   <div className="col-sm-9">
                     {loadingBottomMenu ? (
-                      <p>Loading...</p>
+                      <Loader/>
                     ) : (
                       <Menu menulinks={headerMenuBottom} className="header-bottom-menu" />
                     )}

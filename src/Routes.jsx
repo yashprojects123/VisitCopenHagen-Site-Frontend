@@ -25,6 +25,7 @@ import Planning from './Pages/Planning/Planning';
 import Activities from './Pages/Activities/Activities';
 import AddDynamicPage from './Admin/Pages/AddDynamicPage/AddDynamicPage';
 import AuthorizedMessage from './Pages/AuthForm/AuthorizedMessage';
+import AddBanner from './Admin/Pages/AddBanner/AddBanner';
  
 const Routes = ({ children }) => {
  
@@ -83,6 +84,10 @@ const Routes = ({ children }) => {
         {
           path: '/search',
           element: <SearchResultPage />,
+        },
+        {
+          path: '/add-banner',
+          element: <AddBanner />,
         },
          {
           path: '/unauthorized',

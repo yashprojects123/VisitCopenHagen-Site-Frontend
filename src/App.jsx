@@ -6,21 +6,59 @@ import { createContext, useEffect, useState } from "react";
 import { fetchSiteSettings } from "./Utils/fetchSiteSettings.js";
 import { fetchAllUsers } from "./Utils/fetchAllUsers.js";
 import { Toaster } from "react-hot-toast";
+import { api } from "./Services/axiosInstance.js"; // Import the centralized axios instance
 
 export const BasicSettingsContext = createContext();
 
 function App() {
   const [siteSettings, setSiteSettings] = useState(null);
   const [users, setUsers] = useState(null);
+  const [currentUserData, setCurrentUserData] = useState(null);
   const { pathname } = useLocation();
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        setIsAuthenticated(false);
+        setCurrentUserData(null);
+        return;
+      }
+
+      try {
+  
+        const res = await api.get("/api/check-auth");
+        console.log(res.data)
+        if (res.data?.isAuthenticated && res.data?.user) {
+          setIsAuthenticated(true);
+          setCurrentUserData(res.data.user); // Store the user data
+        } else {
+          // If the token exists but the backend says not authenticated, log out
+          localStorage.removeItem("accessToken");
+          setIsAuthenticated(false);
+          setCurrentUserData(null);
+        }
+      } catch (error) {
+        console.error("Failed to check auth status:", error);
+        // Interceptor handles 401 and redirect to login
+        // For other errors, ensure user is logged out
+        localStorage.removeItem("accessToken");
+        setIsAuthenticated(false);
+        setCurrentUserData(null);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+
+
   useEffect(() => {
 
-		// check access token is in localStorage
-		const token = localStorage.getItem("accessToken");
-		if(token) {
-			setIsAuthenticated(true);
-		}
 		// Fetch site settings and users data
     const fetchData = async () => {
       try {
@@ -44,7 +82,7 @@ function App() {
   }, []);
 
   return (
-    <BasicSettingsContext.Provider value={{ siteSettings, users,isAuthenticated,setIsAuthenticated, setSiteSettings }}>
+    <BasicSettingsContext.Provider value={{ siteSettings,currentUserData, setCurrentUserData,users,isAuthenticated,setIsAuthenticated, setSiteSettings }}>
       {!pathname.includes("/admin") && <Header />}
 
       <main className="main-content">

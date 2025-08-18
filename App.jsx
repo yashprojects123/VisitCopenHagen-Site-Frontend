@@ -44,7 +44,7 @@ function App() {
   }, []);
 
   return (
-    <BasicSettingsContext.Provider value={{ siteSettings, users,isAuthenticated,setIsAuthenticated, setSiteSettings }}>
+    <BasicSettingsContext.Provider value={{ siteSettings, users,setUser,isAuthenticated,setIsAuthenticated, setSiteSettings }}>
       {!pathname.includes("/admin") && <Header />}
 
       <main className="main-content">

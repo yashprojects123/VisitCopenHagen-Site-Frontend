@@ -1,0 +1,10 @@
+.add-three-column-layout-page {
+	padding: 2rem;
+	background: #f8fafc;
+	min-height: 60vh;
+}
+.add-three-column-layout-page h1 {
+	color: #2d3748;
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
