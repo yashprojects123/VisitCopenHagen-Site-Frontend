@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./AddDynamicPage.css";
-import { api } from "../../../Services/axiosInstance";
+import { api, publicApi } from "../../../Services/axiosInstance";
+import toast from "react-hot-toast";
 
 const AddDynamicPage = () => {
 	const [pageTitle, setPageTitle] = useState("");
@@ -12,7 +13,7 @@ const AddDynamicPage = () => {
     console.log(addedSections)
   }, [addedSections]);
 
-  
+
 	// Handler for the Banner Section
 	const handleBannerTopicChange = (id, newTopic) => {
 		setAddedSections((prevSections) =>
@@ -47,13 +48,13 @@ const AddDynamicPage = () => {
 		);
 	};
 
-	const handleBannerCaptionChange = (id, newDescription) => {
+	const handleBannerCaptionChange = (id, newCaption) => {
 		setAddedSections((prevSections) =>
 			prevSections.map((section) =>
 				section.id === id && section.type === "banner"
 					? {
 							...section,
-							data: { ...section.data, description: newDescription },
+							data: { ...section.data, caption: newCaption },
 					  }
 					: section
 			)
@@ -186,13 +187,11 @@ const AddDynamicPage = () => {
 		event
 	) => {
 		const file = event.target.files[0];
+		const previewUrl = URL.createObjectURL(file);
 		if (!file || !file.type.startsWith("image/")) {
 			alert("Please select an image file (e.g., PNG, JPG, GIF).");
 			return;
 		}
-
-		const reader = new FileReader();
-		reader.onloadend = () => {
 			setAddedSections((prevSections) =>
 				prevSections.map((section) => {
 					if (section.id === sectionId && section.type === "three-columns") {
@@ -202,7 +201,7 @@ const AddDynamicPage = () => {
 								...section.data,
 								subforms: section.data.subforms.map((subform) =>
 									subform.id === subformId
-										? { ...subform, image: reader.result }
+										? { ...subform, image: {file, previewUrl} }
 										: subform
 								),
 							},
@@ -211,8 +210,7 @@ const AddDynamicPage = () => {
 					return section;
 				})
 			);
-		};
-		reader.readAsDataURL(file);
+
 		event.target.value = "";
 	};
 	const handleThreeColumnsSubformInputChange = (
@@ -315,13 +313,13 @@ const AddDynamicPage = () => {
 	};
 	const handleFourColumnsSubformImageSelect = (sectionId, subformId, event) => {
 		const file = event.target.files[0];
+		const previewUrl = URL.createObjectURL(file);
 		if (!file || !file.type.startsWith("image/")) {
 			alert("Please select an image file (e.g., PNG, JPG, GIF).");
 			return;
 		}
 
-		const reader = new FileReader();
-		reader.onloadend = () => {
+		
 			setAddedSections((prevSections) =>
 				prevSections.map((section) => {
 					if (section.id === sectionId && section.type === "four-columns") {
@@ -331,7 +329,7 @@ const AddDynamicPage = () => {
 								...section.data,
 								subforms: section.data.subforms.map((subform) =>
 									subform.id === subformId
-										? { ...subform, image: reader.result }
+										? { ...subform, image: {file,previewUrl} }
 										: subform
 								),
 							},
@@ -340,8 +338,7 @@ const AddDynamicPage = () => {
 					return section;
 				})
 			);
-		};
-		reader.readAsDataURL(file);
+	
 		event.target.value = "";
 	};
 	const handleFourColumnsSubformInputChange = (
@@ -411,12 +408,12 @@ const AddDynamicPage = () => {
 	};
 	const handleBigBannerWithTextCardImageSelect = (id, event) => {
 		const file = event.target.files[0];
+		const previewUrl = URL.createObjectURL(file);
 		if (!file || !file.type.startsWith("image/")) {
 			alert("Please select an image file (e.g., PNG, JPG, GIF).");
 			return;
 		}
-		const reader = new FileReader();
-		reader.onloadend = () => {
+
 			setAddedSections((prevSections) =>
 				prevSections.map((section) => {
 					if (
@@ -427,15 +424,14 @@ const AddDynamicPage = () => {
 							...section,
 							data: {
 								...section.data,
-								bigImage: reader.result,
+								bigImage: { file, previewUrl},
 							},
 						};
 					}
 					return section;
 				})
 			);
-		};
-		reader.readAsDataURL(file);
+
 		event.target.value = "";
 	};
 	const handleBigBannerWithTextCardImageCaptionChange = (id, newCaption) => {
@@ -464,7 +460,7 @@ const AddDynamicPage = () => {
 					images: [],
 					subTopic: "",
 					description: "",
-					imageCaption: "",
+					caption: "",
 				};
 			} else if (selectedSectionType === "three-columns") {
 				newSection.data = {
@@ -495,7 +491,7 @@ const AddDynamicPage = () => {
 		);
 	};
  const handleSavePage = async() => {
-    // **NEW VALIDATION: Check if pageTitle is empty**
+    // Check if pageTitle is empty**
     if (!pageTitle || pageTitle.trim() === '') {
         alert("Cannot save page: Page title is required.");
         console.warn("Save attempt failed: Page title is empty.");
@@ -554,7 +550,85 @@ const AddDynamicPage = () => {
         console.warn("Save attempt failed: No valid sections found.");
         return; // Stop the function from proceeding
     }
+      for(let i=0;i!=filteredSections.length;i++){
+    const section = filteredSections[i]; 
+    if(section.type ==="banner"){
+        let bannerImages = section.data.images;
+        
+        let bannerImageFiles = [];
+				if(Array.isArray(bannerImages)){
+        if (bannerImages && bannerImages.length > 0) {
+            bannerImages.forEach((image,index) => {
+                bannerImageFiles.push(image.file);
+            });
+        }
+        // console.log(bannerImageFiles)  
+        let bannerFormdata = new FormData();
+        bannerImageFiles.forEach((file) => {
+            bannerFormdata.append('images', file); // Append each file with the same field name
+        });
 
+				// Making the API request to upload the images
+        let res = await publicApi.post('/api/upload-images', bannerFormdata);
+        console.log(res);
+
+        if(res.status === 200){
+					console.log(res.data)
+            section.data.images = {urls: res.data.imageUrls, isNew:true}; 
+        }
+        else{
+            section.data.images = null;
+        }
+			}
+    }
+
+		if(section.type === "big-banner-with-text-card"){
+			if(!section.data.bigImage.hasOwnProperty("isNew")){
+			let bigImageFile = section.data.bigImage.file;
+			if(bigImageFile instanceof File){
+				let bigBannerFormdata = new FormData();
+				bigBannerFormdata.append('images', bigImageFile);
+				let res = await publicApi.post('/api/upload-images', bigBannerFormdata);
+				console.log("big-banner-res: "+res);
+				if(res.status === 200){
+					section.data.bigImage = {url: res.data.imageUrls[0], isNew:true};
+				}else{
+					section.data.bigImage = null;
+				}
+			}
+			}
+			else{
+				toast.error("Big Banner image already uploaded for this section.");
+			}
+		}
+		
+		   if(section.type ==="three-columns" || section.type === "four-columns"){
+        let subforms = section.data.subforms;
+		
+       if(subforms && subforms.length > 0){
+				for(let j=0;j!=subforms.length;j++){
+					if(!subforms[j].image.hasOwnProperty("isNew")){
+					let imageFile = subforms[j].image.file;
+					if(imageFile instanceof File){
+						let subformImageFormdata = new FormData();
+						subformImageFormdata.append('images', imageFile);
+						let res = await publicApi.post('/api/upload-images', subformImageFormdata);
+						
+						if(res.status === 200){
+							subforms[j].image = {url: res.data.imageUrls[0], isNew:true};
+						}else{
+							subforms[j].image = null;
+						}
+					}
+
+			 }
+			 
+			}
+			
+    }
+      }
+    }
+ 
     // Generate the slug from the pageTitle
     const pageSlug = pageTitle
         .toLowerCase()
@@ -581,10 +655,9 @@ const AddDynamicPage = () => {
     // 4. Make the API request
         try {
             const response = await api.post('/api/add-new-page', pageData);
-
             if (response.status === 201) {
-                alert('Page saved successfully! Page ID: ' + response.data.page.id);
-                console.log('Page saved response:', response.data);
+								toast.success('Page saved successfully! Page ID: ' + response.page.id);
+                console.log(response.page);
                 // Optionally clear the form or redirect
                 setPageTitle('');
                 setAddedSections([]);
@@ -776,16 +849,20 @@ const AddDynamicPage = () => {
 													/2)
 												</span>
 												<div className="image-previews">
-                          {(section.data.images || []).map((imgData, imgIndex) => (
-        <div key={imgIndex} className="image-preview-item">
-            <img
-                src={imgData.previewUrl || imgData} // Use previewUrl for new files, or imgData (the URL) for existing ones
-                alt={`Banner Image ${imgIndex + 1}`}
-                onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://placehold.co/100x100/FF0000/FFFFFF?text=Error";
-                }}
-            />
+												
+                          { (Array.isArray(section.data.images)
+    ? section.data.images
+    : section.data.images?.imageUrls || []
+).map((imgData, imgIndex) => (
+  <div key={imgIndex} className="image-preview-item">
+    <img
+      src={imgData.previewUrl || imgData} 
+      alt={`Banner Image ${imgIndex + 1}`}
+      onError={(e) => {
+        e.target.onerror = null;
+        e.target.src = "https://placehold.co/100x100/FF0000/FFFFFF?text=Error";
+      }}
+    />
             <button
 																onClick={() =>
 																	handleBannerRemoveImage(section.id, imgIndex)
@@ -995,7 +1072,7 @@ const AddDynamicPage = () => {
 																	</button>
 																	{subform.image && (
 																		<div className="image-preview-item">
-																			<img src={subform.image} alt="Subform" />
+																		<img src={subform.image.previewUrl ? subform.image.previewUrl : subform.image.url} alt="Subform" />
 																			<button
 																				onClick={() =>
 																					handleThreeColumnsSubformInputChange(
@@ -1193,7 +1270,7 @@ const AddDynamicPage = () => {
 																	</button>
 																	{subform.image && (
 																		<div className="image-preview-item">
-																			<img src={subform.image} alt="Subform" />
+																			<img src={subform.image.previewUrl ? subform.image.previewUrl : subform.image.url} alt="Subform" />
 																			<button
 																				onClick={() =>
 																					handleFourColumnsSubformInputChange(
@@ -1229,7 +1306,7 @@ const AddDynamicPage = () => {
 										</>
 									)}
 
-									{/* New: BigBannerWithTextCard Section JSX */}
+									{/*  BigBannerWithTextCard Section JSX */}
 									{section.type === "big-banner-with-text-card" && (
 										<>
 											<div className="input-group">
@@ -1302,7 +1379,7 @@ const AddDynamicPage = () => {
 													{section.data.bigImage && (
 														<div className="image-preview-item">
 															<img
-																src={section.data.bigImage}
+																src={section.data.bigImage.previewUrl ? section.data.bigImage.previewUrl : section.data.bigImage.url }
 																alt="Big Banner"
 															/>
 															<button
