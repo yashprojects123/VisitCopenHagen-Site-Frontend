@@ -7,11 +7,28 @@ const AddDynamicPage = () => {
 	const [pageTitle, setPageTitle] = useState("");
 	const [selectedSectionType, setSelectedSectionType] = useState("");
 	const [addedSections, setAddedSections] = useState([]);
+	const [pageTitleError, setPageTitleError] = useState("");
 	const fileInputRefs = useRef({});
+	const debounceTimeout = useRef();
 
-  useEffect(() => {
-    console.log(addedSections)
-  }, [addedSections]);
+	useEffect(() => {
+		if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+		debounceTimeout.current = setTimeout(async () => {
+			try {
+				// Use publicApi for remote username check
+				const res = await publicApi.get(
+					`/api/check-page-exists/?title=${pageTitle}`
+				);
+				if (res.data.success != false) {
+					setPageTitleError("Page already exists. Choose a different page title.");
+				} else {
+					setPageTitleError("");
+				}
+			} catch {
+				setPageTitleError("");
+			}
+		}, 500);
+	}, [pageTitle]);
 
 
 	// Handler for the Banner Section
@@ -40,9 +57,9 @@ const AddDynamicPage = () => {
 			prevSections.map((section) =>
 				section.id === id && section.type === "banner"
 					? {
-							...section,
-							data: { ...section.data, description: newDescription },
-					  }
+						...section,
+						data: { ...section.data, description: newDescription },
+					}
 					: section
 			)
 		);
@@ -53,46 +70,46 @@ const AddDynamicPage = () => {
 			prevSections.map((section) =>
 				section.id === id && section.type === "banner"
 					? {
-							...section,
-							data: { ...section.data, caption: newCaption },
-					  }
+						...section,
+						data: { ...section.data, caption: newCaption },
+					}
 					: section
 			)
 		);
 	};
 
 	const handleBannerImageSelect = (id, event) => {
-    const file = event.target.files[0];
-    if (!file || !file.type.startsWith("image/")) {
-        alert("Please select an image file (e.g., PNG, JPG, GIF).");
-        return;
-    }
+		const file = event.target.files[0];
+		if (!file || !file.type.startsWith("image/")) {
+			alert("Please select an image file (e.g., PNG, JPG, GIF).");
+			return;
+		}
 
-    setAddedSections((prevSections) =>
-        prevSections.map((section) => {
-            if (section.id === id && section.type === "banner") {
-                const currentImages = section.data.images || [];
-                if (currentImages.length < 2) {
-                    // Create a temporary URL for immediate preview
-                    const previewUrl = URL.createObjectURL(file);
-                    return {
-                        ...section,
-                        data: {
-                            ...section.data,
-                            // Store both the File object and its temporary preview URL
-                            images: [...currentImages, { file, previewUrl }],
-                        },
-                    };
-                } else {
-                    alert("Maximum 2 images already selected for this banner section.");
-                }
-            }
-            return section;
-        })
-    );
-    // Clear the input value so the same file can be selected again if needed
-    event.target.value = "";
-};
+		setAddedSections((prevSections) =>
+			prevSections.map((section) => {
+				if (section.id === id && section.type === "banner") {
+					const currentImages = section.data.images || [];
+					if (currentImages.length < 2) {
+						// Create a temporary URL for immediate preview
+						const previewUrl = URL.createObjectURL(file);
+						return {
+							...section,
+							data: {
+								...section.data,
+								// Store both the File object and its temporary preview URL
+								images: [...currentImages, { file, previewUrl }],
+							},
+						};
+					} else {
+						alert("Maximum 2 images already selected for this banner section.");
+					}
+				}
+				return section;
+			})
+		);
+		// Clear the input value so the same file can be selected again if needed
+		event.target.value = "";
+	};
 
 	const triggerBannerFileInput = (id) => {
 		if (fileInputRefs.current[id]) {
@@ -142,9 +159,9 @@ const AddDynamicPage = () => {
 			prevSections.map((section) =>
 				section.id === id && section.type === "three-columns"
 					? {
-							...section,
-							data: { ...section.data, description: newDescription },
-					  }
+						...section,
+						data: { ...section.data, description: newDescription },
+					}
 					: section
 			)
 		);
@@ -192,24 +209,24 @@ const AddDynamicPage = () => {
 			alert("Please select an image file (e.g., PNG, JPG, GIF).");
 			return;
 		}
-			setAddedSections((prevSections) =>
-				prevSections.map((section) => {
-					if (section.id === sectionId && section.type === "three-columns") {
-						return {
-							...section,
-							data: {
-								...section.data,
-								subforms: section.data.subforms.map((subform) =>
-									subform.id === subformId
-										? { ...subform, image: {file, previewUrl} }
-										: subform
-								),
-							},
-						};
-					}
-					return section;
-				})
-			);
+		setAddedSections((prevSections) =>
+			prevSections.map((section) => {
+				if (section.id === sectionId && section.type === "three-columns") {
+					return {
+						...section,
+						data: {
+							...section.data,
+							subforms: section.data.subforms.map((subform) =>
+								subform.id === subformId
+									? { ...subform, image: { file, previewUrl } }
+									: subform
+							),
+						},
+					};
+				}
+				return section;
+			})
+		);
 
 		event.target.value = "";
 	};
@@ -272,9 +289,9 @@ const AddDynamicPage = () => {
 			prevSections.map((section) =>
 				section.id === id && section.type === "four-columns"
 					? {
-							...section,
-							data: { ...section.data, description: newDescription },
-					  }
+						...section,
+						data: { ...section.data, description: newDescription },
+					}
 					: section
 			)
 		);
@@ -319,26 +336,26 @@ const AddDynamicPage = () => {
 			return;
 		}
 
-		
-			setAddedSections((prevSections) =>
-				prevSections.map((section) => {
-					if (section.id === sectionId && section.type === "four-columns") {
-						return {
-							...section,
-							data: {
-								...section.data,
-								subforms: section.data.subforms.map((subform) =>
-									subform.id === subformId
-										? { ...subform, image: {file,previewUrl} }
-										: subform
-								),
-							},
-						};
-					}
-					return section;
-				})
-			);
-	
+
+		setAddedSections((prevSections) =>
+			prevSections.map((section) => {
+				if (section.id === sectionId && section.type === "four-columns") {
+					return {
+						...section,
+						data: {
+							...section.data,
+							subforms: section.data.subforms.map((subform) =>
+								subform.id === subformId
+									? { ...subform, image: { file, previewUrl } }
+									: subform
+							),
+						},
+					};
+				}
+				return section;
+			})
+		);
+
 		event.target.value = "";
 	};
 	const handleFourColumnsSubformInputChange = (
@@ -399,9 +416,9 @@ const AddDynamicPage = () => {
 			prevSections.map((section) =>
 				section.id === id && section.type === "big-banner-with-text-card"
 					? {
-							...section,
-							data: { ...section.data, description: newDescription },
-					  }
+						...section,
+						data: { ...section.data, description: newDescription },
+					}
 					: section
 			)
 		);
@@ -414,23 +431,23 @@ const AddDynamicPage = () => {
 			return;
 		}
 
-			setAddedSections((prevSections) =>
-				prevSections.map((section) => {
-					if (
-						section.id === id &&
-						section.type === "big-banner-with-text-card"
-					) {
-						return {
-							...section,
-							data: {
-								...section.data,
-								bigImage: { file, previewUrl},
-							},
-						};
-					}
-					return section;
-				})
-			);
+		setAddedSections((prevSections) =>
+			prevSections.map((section) => {
+				if (
+					section.id === id &&
+					section.type === "big-banner-with-text-card"
+				) {
+					return {
+						...section,
+						data: {
+							...section.data,
+							bigImage: { file, previewUrl },
+						},
+					};
+				}
+				return section;
+			})
+		);
 
 		event.target.value = "";
 	};
@@ -490,204 +507,208 @@ const AddDynamicPage = () => {
 			prevSections.filter((section) => section.id !== idToRemove)
 		);
 	};
- const handleSavePage = async() => {
-    // Check if pageTitle is empty**
-    if (!pageTitle || pageTitle.trim() === '') {
-        alert("Cannot save page: Page title is required.");
-        console.warn("Save attempt failed: Page title is empty.");
-        return; // Stop the function from proceeding
-    }
+	const handleSavePage = async () => {
+		// Check if pageTitle is empty**
+		if (!pageTitle || pageTitle.trim() === '') {
+			toast.error("Cannot save page: Page title is required.");
+			console.warn("Save attempt failed: Page title is empty.");
+			return; // Stop the function from proceeding
+		}
+		if(pageTitleError!=""){
+			toast.error(pageTitleError);
+			return;
+		}
 
-    // 1. Process and filter sections before saving
-    const filteredSections = addedSections.flatMap((section) => {
-        let filteredSection = { ...section };
+		// 1. Process and filter sections before saving
+		const filteredSections = addedSections.flatMap((section) => {
+			let filteredSection = { ...section };
 
-        // Handle sections with subforms (3-columns, 4-columns)
-        if (
-            filteredSection.type === "three-columns" ||
-            filteredSection.type === "four-columns"
-        ) {
-            const filteredSubforms = (filteredSection.data.subforms || []).filter(
-                (subform) => {
-                    // Keep subforms that have a non-empty title
-                    return subform.title && subform.title.trim() !== "";
-                }
-            );
+			// Handle sections with subforms (3-columns, 4-columns)
+			if (
+				filteredSection.type === "three-columns" ||
+				filteredSection.type === "four-columns"
+			) {
+				const filteredSubforms = (filteredSection.data.subforms || []).filter(
+					(subform) => {
+						// Keep subforms that have a non-empty title
+						return subform.title && subform.title.trim() !== "";
+					}
+				);
 
-            // Update the section's data with the filtered subforms
-            filteredSection.data = {
-                ...filteredSection.data,
-                subforms: filteredSubforms,
-            };
+				// Update the section's data with the filtered subforms
+				filteredSection.data = {
+					...filteredSection.data,
+					subforms: filteredSubforms,
+				};
 
-            // If no subforms remain, this section is considered empty and will be removed later
-            if (filteredSubforms.length === 0) {
-                return []; // Return an empty array to flatMap, effectively removing the section
-            }
-        } else if (filteredSection.type === "big-banner-with-text-card") {
-            // Remove BigBanner section if the bigImage is null
-            if (!filteredSection.data.bigImage) {
-                return [];
-            }
-        } else if (filteredSection.type === "banner") {
-            // Remove Banner section if the images array is empty
-            if (
-                !filteredSection.data.images ||
-                filteredSection.data.images.length === 0
-            ) {
-                return [];
-            }
-        }
-
-        return [filteredSection]; // Keep the section if it passed the checks
-    });
-
-    // 2. Check if the final filteredSections array is empty
-    if (filteredSections.length === 0) {
-        alert(
-            "Cannot save page: At least one section with valid data is required."
-        );
-        console.warn("Save attempt failed: No valid sections found.");
-        return; // Stop the function from proceeding
-    }
-      for(let i=0;i!=filteredSections.length;i++){
-    const section = filteredSections[i]; 
-    if(section.type ==="banner"){
-        let bannerImages = section.data.images;
-        
-        let bannerImageFiles = [];
-				if(Array.isArray(bannerImages)){
-        if (bannerImages && bannerImages.length > 0) {
-            bannerImages.forEach((image,index) => {
-                bannerImageFiles.push(image.file);
-            });
-        }
-        // console.log(bannerImageFiles)  
-        let bannerFormdata = new FormData();
-        bannerImageFiles.forEach((file) => {
-            bannerFormdata.append('images', file); // Append each file with the same field name
-        });
-
-				// Making the API request to upload the images
-        let res = await publicApi.post('/api/upload-images', bannerFormdata);
-        console.log(res);
-
-        if(res.status === 200){
-					console.log(res.data)
-            section.data.images = {urls: res.data.imageUrls, isNew:true}; 
-        }
-        else{
-            section.data.images = null;
-        }
-			}
-    }
-
-		if(section.type === "big-banner-with-text-card"){
-			if(!section.data.bigImage.hasOwnProperty("isNew")){
-			let bigImageFile = section.data.bigImage.file;
-			if(bigImageFile instanceof File){
-				let bigBannerFormdata = new FormData();
-				bigBannerFormdata.append('images', bigImageFile);
-				let res = await publicApi.post('/api/upload-images', bigBannerFormdata);
-				console.log("big-banner-res: "+res);
-				if(res.status === 200){
-					section.data.bigImage = {url: res.data.imageUrls[0], isNew:true};
-				}else{
-					section.data.bigImage = null;
+				// If no subforms remain, this section is considered empty and will be removed later
+				if (filteredSubforms.length === 0) {
+					return []; // Return an empty array to flatMap, effectively removing the section
+				}
+			} else if (filteredSection.type === "big-banner-with-text-card") {
+				// Remove BigBanner section if the bigImage is null
+				if (!filteredSection.data.bigImage) {
+					return [];
+				}
+			} else if (filteredSection.type === "banner") {
+				// Remove Banner section if the images array is empty
+				if (
+					!filteredSection.data.images ||
+					filteredSection.data.images.length === 0
+				) {
+					return [];
 				}
 			}
-			}
-			else{
-				toast.error("Big Banner image already uploaded for this section.");
-			}
+
+			return [filteredSection]; // Keep the section if it passed the checks
+		});
+
+		// 2. Check if the final filteredSections array is empty
+		if (filteredSections.length === 0) {
+			alert(
+				"Cannot save page: At least one section with valid data is required."
+			);
+			console.warn("Save attempt failed: No valid sections found.");
+			return; // Stop the function from proceeding
 		}
-		
-		   if(section.type ==="three-columns" || section.type === "four-columns"){
-        let subforms = section.data.subforms;
-		
-       if(subforms && subforms.length > 0){
-				for(let j=0;j!=subforms.length;j++){
-					if(!subforms[j].image.hasOwnProperty("isNew")){
-					let imageFile = subforms[j].image.file;
-					if(imageFile instanceof File){
-						let subformImageFormdata = new FormData();
-						subformImageFormdata.append('images', imageFile);
-						let res = await publicApi.post('/api/upload-images', subformImageFormdata);
-						
-						if(res.status === 200){
-							subforms[j].image = {url: res.data.imageUrls[0], isNew:true};
-						}else{
-							subforms[j].image = null;
+		for (let i = 0; i != filteredSections.length; i++) {
+			const section = filteredSections[i];
+			if (section.type === "banner") {
+				let bannerImages = section.data.images;
+
+				let bannerImageFiles = [];
+				if (Array.isArray(bannerImages)) {
+					if (bannerImages && bannerImages.length > 0) {
+						bannerImages.forEach((image, index) => {
+							bannerImageFiles.push(image.file);
+						});
+					}
+					// console.log(bannerImageFiles)  
+					let bannerFormdata = new FormData();
+					bannerImageFiles.forEach((file) => {
+						bannerFormdata.append('images', file); // Append each file with the same field name
+					});
+
+					// Making the API request to upload the images
+					let res = await publicApi.post('/api/upload-images', bannerFormdata);
+					console.log(res);
+
+					if (res.status === 200) {
+						console.log(res.data)
+						section.data.images = { urls: res.data.imageUrls, isNew: true };
+					}
+					else {
+						section.data.images = null;
+					}
+				}
+			}
+
+			if (section.type === "big-banner-with-text-card") {
+				if (!section.data.bigImage.hasOwnProperty("isNew")) {
+					let bigImageFile = section.data.bigImage.file;
+					if (bigImageFile instanceof File) {
+						let bigBannerFormdata = new FormData();
+						bigBannerFormdata.append('images', bigImageFile);
+						let res = await publicApi.post('/api/upload-images', bigBannerFormdata);
+						console.log("big-banner-res: " + res);
+						if (res.status === 200) {
+							section.data.bigImage = { url: res.data.imageUrls[0], isNew: true };
+						} else {
+							section.data.bigImage = null;
 						}
 					}
-
-			 }
-			 
+				}
+				else {
+					toast.error("Big Banner image already uploaded for this section.");
+				}
 			}
-			
-    }
-      }
-    }
- 
-    // Generate the slug from the pageTitle
-    const pageSlug = pageTitle
-        .toLowerCase()
-        .replace(/\s+/g, '-') // Replace spaces with hyphens
-        .replace(/[^a-z0-9-]/g, '') // Remove non-alphanumeric characters except hyphens
-        .replace(/--+/g, '-') // Replace multiple hyphens with a single hyphen
-        .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 
-    // 3. Create the final pageData object with the filtered sections and the new slug
-    const pageData = {
-        id: `page-${Date.now()}`,
-        title: pageTitle,
-        slug: pageSlug, // Add the generated slug here
-        sections: filteredSections.map((section) => ({
-            id: section.id,
-            type: section.type,
-            data: section.data,
-        })),
-    };
+			if (section.type === "three-columns" || section.type === "four-columns") {
+				let subforms = section.data.subforms;
 
-    console.log("Trying to Save Page Data:", pageData);
-    
+				if (subforms && subforms.length > 0) {
+					for (let j = 0; j != subforms.length; j++) {
+						if (!subforms[j].image.hasOwnProperty("isNew")) {
+							let imageFile = subforms[j].image.file;
+							if (imageFile instanceof File) {
+								let subformImageFormdata = new FormData();
+								subformImageFormdata.append('images', imageFile);
+								let res = await publicApi.post('/api/upload-images', subformImageFormdata);
 
-    // 4. Make the API request
-        try {
-            const response = await api.post('/api/add-new-page', pageData);
-            if (response.status === 201) {
-								toast.success('Page saved successfully! Page ID: ' + response.page.id);
-                console.log(response.page);
-                // Optionally clear the form or redirect
-                setPageTitle('');
-                setAddedSections([]);
-                setSelectedSectionType('');
-            } else {
-                // This block might not be hit often if Axios catches non-2xx as errors
-                alert('Failed to save page: ' + (response.data.message || 'Unknown error.'));
-                console.error('Unexpected response status:', response.status, response.data);
-            }
-        } catch (error) {
-            console.error('Error saving page:', error);
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                const errorMessage = error.response.data.message || 'Server error occurred.';
-                alert(`Failed to save page: ${errorMessage}`);
-                console.error('Server Error Data:', error.response.data);
-                console.error('Server Error Status:', error.response.status);
-                console.error('Server Error Headers:', error.response.headers);
-            } else if (error.request) {
-                // The request was made but no response was received
-                alert('Failed to save page: No response from server. Please check your network connection.');
-                console.error('No response received:', error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                alert('Failed to save page: An unexpected error occurred.');
-                console.error('Axios config error:', error.message);
-            }
-        }
-};
+								if (res.status === 200) {
+									subforms[j].image = { url: res.data.imageUrls[0], isNew: true };
+								} else {
+									subforms[j].image = null;
+								}
+							}
+
+						}
+
+					}
+
+				}
+			}
+		}
+
+		// Generate the slug from the pageTitle
+		const pageSlug = pageTitle
+			.toLowerCase()
+			.replace(/\s+/g, '-') // Replace spaces with hyphens
+			.replace(/[^a-z0-9-]/g, '') // Remove non-alphanumeric characters except hyphens
+			.replace(/--+/g, '-') // Replace multiple hyphens with a single hyphen
+			.replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+
+		// 3. Create the final pageData object with the filtered sections and the new slug
+		const pageData = {
+			id: `page-${Date.now()}`,
+			title: pageTitle,
+			slug: pageSlug, // Add the generated slug here
+			sections: filteredSections.map((section) => ({
+				id: section.id,
+				type: section.type,
+				data: section.data,
+			})),
+		};
+
+		console.log("Trying to Save Page Data:", pageData);
+
+
+		// 4. Make the API request
+		try {
+			const response = await api.post('/api/add-new-page', pageData);
+			if (response.status === 201) {
+				toast.success('Page saved successfully!');
+				console.log(response.page);
+				// Optionally clear the form or redirect
+				setPageTitle('');
+				setAddedSections([]);
+				setSelectedSectionType('');
+			} else {
+				// This block might not be hit often if Axios catches non-2xx as errors
+				alert('Failed to save page: ' + (response.data.message || 'Unknown error.'));
+				console.error('Unexpected response status:', response.status, response.data);
+			}
+		} catch (error) {
+			console.error('Error saving page:', error);
+			if (error.response) {
+				// The request was made and the server responded with a status code
+				// that falls out of the range of 2xx
+				const errorMessage = error.response.data.message || 'Server error occurred.';
+				alert(`Failed to save page: ${errorMessage}`);
+				console.error('Server Error Data:', error.response.data);
+				console.error('Server Error Status:', error.response.status);
+				console.error('Server Error Headers:', error.response.headers);
+			} else if (error.request) {
+				// The request was made but no response was received
+				alert('Failed to save page: No response from server. Please check your network connection.');
+				console.error('No response received:', error.request);
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				alert('Failed to save page: An unexpected error occurred.');
+				console.error('Axios config error:', error.message);
+			}
+		}
+	};
 
 	return (
 		<div className="app-container">
@@ -705,6 +726,9 @@ const AddDynamicPage = () => {
 						value={pageTitle}
 						onChange={(e) => setPageTitle(e.target.value)}
 					/>
+					{pageTitleError &&
+						<span className="error">{pageTitleError}</span>}
+
 				</div>
 				{addedSections.length > 0 && (
 					<div className="added-sections-container">
@@ -849,21 +873,21 @@ const AddDynamicPage = () => {
 													/2)
 												</span>
 												<div className="image-previews">
-												
-                          { (Array.isArray(section.data.images)
-    ? section.data.images
-    : section.data.images?.imageUrls || []
-).map((imgData, imgIndex) => (
-  <div key={imgIndex} className="image-preview-item">
-    <img
-      src={imgData.previewUrl || imgData} 
-      alt={`Banner Image ${imgIndex + 1}`}
-      onError={(e) => {
-        e.target.onerror = null;
-        e.target.src = "https://placehold.co/100x100/FF0000/FFFFFF?text=Error";
-      }}
-    />
-            <button
+
+													{(Array.isArray(section.data.images)
+														? section.data.images
+														: section.data.images?.imageUrls || []
+													).map((imgData, imgIndex) => (
+														<div key={imgIndex} className="image-preview-item">
+															<img
+																src={imgData.previewUrl || imgData}
+																alt={`Banner Image ${imgIndex + 1}`}
+																onError={(e) => {
+																	e.target.onerror = null;
+																	e.target.src = "https://placehold.co/100x100/FF0000/FFFFFF?text=Error";
+																}}
+															/>
+															<button
 																onClick={() =>
 																	handleBannerRemoveImage(section.id, imgIndex)
 																}
@@ -883,9 +907,9 @@ const AddDynamicPage = () => {
 																	></path>
 																</svg>
 															</button>
-        </div>
-    ))}
-									
+														</div>
+													))}
+
 												</div>
 											</div>
 										</>
@@ -1072,7 +1096,7 @@ const AddDynamicPage = () => {
 																	</button>
 																	{subform.image && (
 																		<div className="image-preview-item">
-																		<img src={subform.image.previewUrl ? subform.image.previewUrl : subform.image.url} alt="Subform" />
+																			<img src={subform.image.previewUrl ? subform.image.previewUrl : subform.image.url} alt="Subform" />
 																			<button
 																				onClick={() =>
 																					handleThreeColumnsSubformInputChange(
@@ -1379,7 +1403,7 @@ const AddDynamicPage = () => {
 													{section.data.bigImage && (
 														<div className="image-preview-item">
 															<img
-																src={section.data.bigImage.previewUrl ? section.data.bigImage.previewUrl : section.data.bigImage.url }
+																src={section.data.bigImage.previewUrl ? section.data.bigImage.previewUrl : section.data.bigImage.url}
 																alt="Big Banner"
 															/>
 															<button
@@ -1388,9 +1412,9 @@ const AddDynamicPage = () => {
 																		prev.map((s) =>
 																			s.id === section.id
 																				? {
-																						...s,
-																						data: { ...s.data, bigImage: null },
-																				  }
+																					...s,
+																					data: { ...s.data, bigImage: null },
+																				}
 																				: s
 																		)
 																	)
