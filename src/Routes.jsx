@@ -26,6 +26,7 @@ import Activities from './Pages/Activities/Activities';
 import AddDynamicPage from './Admin/Pages/AddDynamicPage/AddDynamicPage';
 import AuthorizedMessage from './Pages/AuthForm/AuthorizedMessage';
 import AddBanner from './Admin/Pages/AddBanner/AddBanner';
+import DynamicPageAdd from './Pages/DynamicPageAdd/DynamicPageAdd';
  
 const Routes = ({ children }) => {
  
@@ -116,6 +117,10 @@ const Routes = ({ children }) => {
         {
               path: 'add/new-page',
               element: <AddDynamicPage/>,
+            },
+        {
+              path: 'add/page',
+              element: <DynamicPageAdd/>,
             },
             {
               path: 'main-navigation-top/edit',

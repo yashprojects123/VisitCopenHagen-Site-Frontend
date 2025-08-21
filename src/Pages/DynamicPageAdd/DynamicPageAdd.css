@@ -1,0 +1,254 @@
+/* styles.css */
+
+/* General page styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  margin: 0;
+  padding: 2rem;
+  color: #333;
+}
+
+form {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Page title */
+form > div > label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #0d6efd;
+}
+
+/* Section card */
+.section-card {
+  background: #fdfdfd;
+  border: 1px solid #e4e4e4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.section-card h3 {
+  margin-top: 0;
+  color: #0d6efd;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e4e4e4;
+  padding-bottom: 0.5rem;
+}
+
+.section-card h4 {
+  font-size: 1rem;
+  color: #555;
+  margin: 1rem 0 0.5rem;
+}
+
+/* Buttons */
+button {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Button styles */
+button[type="submit"] {
+  background: #198754;
+  color: #fff;
+}
+
+button[type="submit"]:hover {
+  background: #157347;
+}
+
+button.add-btn {
+  background: #0d6efd;
+  color: white;
+}
+
+button.add-btn:hover {
+  background: #0b5ed7;
+}
+
+button.remove-btn {
+  background: #dc3545;
+  color: white;
+}
+
+button.remove-btn:hover {
+  background: #bb2d3b;
+}
+
+/* Column subform box */
+.column-box {
+  background: #f8f9fa;
+  border: 1px dashed #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+
+
+
+.section-container {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  background-color: #fff;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+.error-text {
+  color: #d9534f;
+  font-size: 14px;
+}
+
+.remove-btn {
+  background-color: #e63946;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.15);
+}
+
+.remove-btn:hover {
+  background-color: #c82333;
+}
+
+
+
+.uploader-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.choose-btn {
+  background-color: #2563eb;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.choose-btn:hover {
+  background-color: #1d4ed8;
+  transform: scale(1.02);
+}
+
+.preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.preview-item {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #e63946;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.remove-icon:hover {
+  background: #c82333;
+}
