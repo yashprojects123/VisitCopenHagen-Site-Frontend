@@ -1,20 +1,28 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
-import ImageUploader from "./ImageUploader";
-import { DynamicSectionSchemas } from "./DynamicSectionSchemas";
+import ImageUploader from "../DynamicPageAdd/ImageUploader";
+import { DynamicSectionSchemas } from "../DynamicPageAdd/DynamicSectionSchemas";
 
-function SectionRenderer({ schema, index, remove, errors }) {
-  console.log("field"+index+" value:");
- console.log(schema)
+function EditSectionRenderer({ section, index, remove, errors }) {
+  console.log(section)
   const { register, control, getValues } = useFormContext();
-  // console.log(getValues())
+
+  // Schema definition from section type
+  const schema = DynamicSectionSchemas[section.type];
+  if (!schema) {
+    return <p className="error-text">Unsupported section type: {section.type}</p>;
+  }
+
+  const fields = Array.isArray(schema.fields) ? schema.fields : [schema.fields];
+
   return (
     <div className="section-container">
       <h3 className="section-title">{schema.label}</h3>
-   
-      {schema.fields ? (Array.isArray(schema.fields) ? schema.fields : [schema.fields]).map((field) => {
-       
+
+      {fields.map((field) => {
+        const fieldPath = `sections.${index}.data.${field.name}`;
         const fieldError = errors?.sections?.[index]?.data?.[field.name];
-        const currentValue = getValues(`sections.${index}.data.${field.name}`);
+        const currentValue =
+          getValues(fieldPath) ?? section.data?.[field.name] ?? "";
 
         // ✅ Text input
         if (field.type === "text") {
@@ -23,8 +31,8 @@ function SectionRenderer({ schema, index, remove, errors }) {
               <label className="form-label">{field.label}</label>
               <input
                 type="text"
-                {...register(`sections.${index}.data.${field.name}`)}
-                defaultValue={currentValue} 
+                {...register(fieldPath)}
+                defaultValue={currentValue}
                 placeholder={field.placeholder || ""}
                 className="form-input"
               />
@@ -39,8 +47,8 @@ function SectionRenderer({ schema, index, remove, errors }) {
             <div key={field.name} className="form-group">
               <label className="form-label">{field.label}</label>
               <textarea
-                {...register(`sections.${index}.data.${field.name}`)}
-                defaultValue={currentValue}  
+                {...register(fieldPath)}
+                defaultValue={currentValue}
                 placeholder={field.placeholder || ""}
                 rows={field.rows || 3}
                 className="form-textarea"
@@ -59,7 +67,7 @@ function SectionRenderer({ schema, index, remove, errors }) {
                 name={field.name}
                 sectionIndex={index}
                 multiple={false}
-                defaultValue={currentValue} 
+                defaultValue={currentValue}
               />
               {fieldError && <p className="error-text">{fieldError.message}</p>}
             </div>
@@ -76,18 +84,18 @@ function SectionRenderer({ schema, index, remove, errors }) {
                 sectionIndex={index}
                 multiple={true}
                 max={field.max || 5}
-                defaultValue={currentValue} 
+                defaultValue={currentValue}
               />
               {fieldError && <p className="error-text">{fieldError.message}</p>}
             </div>
           );
         }
 
-        // ✅ Array of objects (like columns)
+        // ✅ Array of objects (e.g. columns)
         if (field.type === "array" && field.fields) {
-          const { fields: arrayFields, append, remove } = useFieldArray({
+          const { fields: arrayFields, append, remove: removeItem } = useFieldArray({
             control,
-            name: `sections.${index}.data.${field.name}`,
+            name: fieldPath,
           });
 
           return (
@@ -97,9 +105,12 @@ function SectionRenderer({ schema, index, remove, errors }) {
               {arrayFields.map((item, subIndex) => (
                 <div key={item.id} className="sub-item">
                   {field.fields.map((subField) => {
-                    const subPath = `sections.${index}.data.${field.name}.${subIndex}.${subField.name}`;
+                    const subPath = `${fieldPath}.${subIndex}.${subField.name}`;
                     const subError = fieldError?.[subIndex]?.[subField.name];
-                    const subValue = getValues(subPath);
+                    const subValue =
+                      getValues(subPath) ??
+                      section.data?.[field.name]?.[subIndex]?.[subField.name] ??
+                      "";
 
                     if (subField.type === "text") {
                       return (
@@ -108,12 +119,9 @@ function SectionRenderer({ schema, index, remove, errors }) {
                           <input
                             type="text"
                             {...register(subPath)}
-                            defaultValue={subValue} 
-                            placeholder={subField.placeholder || ""}
+                            defaultValue={subValue}
                           />
-                          {subError && (
-                            <p className="error-text">{subError.message}</p>
-                          )}
+                          {subError && <p className="error-text">{subError.message}</p>}
                         </div>
                       );
                     }
@@ -124,12 +132,10 @@ function SectionRenderer({ schema, index, remove, errors }) {
                           <label>{subField.label}</label>
                           <textarea
                             {...register(subPath)}
-                            defaultValue={subValue} 
+                            defaultValue={subValue}
                             rows={subField.rows || 3}
                           />
-                          {subError && (
-                            <p className="error-text">{subError.message}</p>
-                          )}
+                          {subError && <p className="error-text">{subError.message}</p>}
                         </div>
                       );
                     }
@@ -142,11 +148,9 @@ function SectionRenderer({ schema, index, remove, errors }) {
                             name={`${field.name}.${subIndex}.${subField.name}`}
                             sectionIndex={index}
                             multiple={false}
-                            defaultValue={subValue}  
+                            defaultValue={subValue}
                           />
-                          {subError && (
-                            <p className="error-text">{subError.message}</p>
-                          )}
+                          {subError && <p className="error-text">{subError.message}</p>}
                         </div>
                       );
                     }
@@ -158,13 +162,12 @@ function SectionRenderer({ schema, index, remove, errors }) {
                     );
                   })}
 
-                  {/* Remove column button */}
                   <button
                     type="button"
-                    onClick={() => remove(subIndex)}
+                    onClick={() => removeItem(subIndex)}
                     className="remove-btn"
                   >
-                    Remove Column
+                    Remove Item
                   </button>
                 </div>
               ))}
@@ -175,7 +178,7 @@ function SectionRenderer({ schema, index, remove, errors }) {
                   onClick={() => append({})}
                   className="add-btn"
                 >
-                  + Add Column
+                  + Add Item
                 </button>
               )}
             </div>
@@ -187,9 +190,7 @@ function SectionRenderer({ schema, index, remove, errors }) {
             Unsupported field type: {field.type}
           </p>
         );
-      })
-: ""
-    }
+      })}
 
       <button type="button" onClick={remove} className="remove-btn">
         🗑 Remove Section
@@ -198,4 +199,4 @@ function SectionRenderer({ schema, index, remove, errors }) {
   );
 }
 
-export default SectionRenderer;
+export default EditSectionRenderer;
