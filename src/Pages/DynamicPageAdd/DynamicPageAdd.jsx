@@ -20,8 +20,52 @@ const methods = useForm({
 
   const [pageTitle, setPageTitle] = useState("");
   const [pageTitleError, setPageTitleError] = useState("");
+  const [slug, setSlug] = useState("");
+  const [slugError, setSlugError] = useState("");
 
   const { fields, append, remove } = useFieldArray({ control, name: "sections" });
+
+  	const debounceTimeout = useRef();
+
+	useEffect(() => {
+		if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+		debounceTimeout.current = setTimeout(async () => {
+			try {
+				// publicApi for page check
+				const res = await publicApi.get(
+					`/api/check-page-exists/?title=${pageTitle}`
+				);
+				if (res.data.success != false) {
+					setPageTitleError("Page already exists.");
+				} else {
+					setPageTitleError("");
+				}
+			} catch {
+				setPageTitleError("");
+			}
+		}, 500);
+	}, [pageTitle]);
+
+  	useEffect(() => {
+		if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+		debounceTimeout.current = setTimeout(async () => {
+		try{
+      const regexForSlug = /[^a-zA-Z0-9_-]/;
+      if(regexForSlug.test(slug)){
+        setSlugError("No special allowed in url alias [ Just you can use underscore(_) and (hyphen) ]");
+      }
+      if(/[A-Z]/.test(slug)){
+        setSlugError("Only small letter allowed in url alias");
+      }
+        if(regexForSlug.test(slug) && /[A-Z]/.test(slug)){
+        setSlugError("Special characters and Capital letter not allowed");
+      }
+    }catch{
+      setSlugError("");
+    }
+		}, 500);
+	}, [slug]);
+
 async function uploadAndReplaceImages(sections, publicApi) {
   for (const section of sections) {
     // Walk through each key of section.data
@@ -78,83 +122,50 @@ async function uploadAndReplaceImages(sections, publicApi) {
 		}
 
     const processedSections = await uploadAndReplaceImages(data.sections, publicApi);
-    // Generate the slug from the pageTitle
-		const pageSlug = pageTitle
-			.toLowerCase()
-			.replace(/\s+/g, '-') // Replace spaces with hyphens
-			.replace(/[^a-z0-9-]/g, '') // Remove non-alphanumeric characters except hyphens
-			.replace(/--+/g, '-') // Replace multiple hyphens with a single hyphen
-			.replace(/^-+|-+$/g, '');
-
 
     // Step 2: build final payload
     const finalData = {
       title: data.title,
-      slug: pageSlug,
+      slug: slug,
       sections: processedSections,
     };
     console.log("📤 Final Payload:", finalData);
 
-      try {
-          const response = await api.post('/api/add-new-page', finalData);
-          if (response.status === 201) {
-            toast.success('Page saved successfully!');
-            console.log(response.page);
-            // Optionally clear the form or redirect
-            setPageTitle('');
-            setAddedSections([]);
-            setSelectedSectionType('');
-          } else {
-            // This block might not be hit often if Axios catches non-2xx as errors
-            alert('Failed to save page: ' + (response.data.message || 'Unknown error.'));
-            console.error('Unexpected response status:', response.status, response.data);
-          }
-        } catch (error) {
-          console.error('Error saving page:', error);
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            const errorMessage = error.response.data.message || 'Server error occurred.';
-            alert(`Failed to save page: ${errorMessage}`);
-            console.error('Server Error Data:', error.response.data);
-            console.error('Server Error Status:', error.response.status);
-            console.error('Server Error Headers:', error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            alert('Failed to save page: No response from server. Please check your network connection.');
-            console.error('No response received:', error.request);
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            alert('Failed to save page: An unexpected error occurred.');
-            console.error('Axios config error:', error.message);
-          }
-        }
+      // try {
+      //     const response = await api.post('/api/add-new-page', finalData);
+      //     if (response.status === 201) {
+      //       toast.success('Page saved successfully!');
+      //       console.log(response.page);
+      //       // Optionally clear the form or redirect
+      //       setPageTitle('');
+      //     } else {
+      //       // This block might not be hit often if Axios catches non-2xx as errors
+      //       toast.error('Failed to save page: ' + (response.data.message || 'Unknown error.'));
+      //       console.error('Unexpected response status:', response.status, response.data);
+      //     }
+      //   } catch (error) {
+      //     console.error('Error saving page:', error);
+      //     if (error.response) {
+      //       const errorMessage = error.response.data.message || 'Server error occurred.';
+      //       toast.error(`Failed to save page: ${errorMessage}`);
+      //     } else if (error.request) {
+      //       // The request was made but no response was received
+      //       toast.error('Failed to save page: No response from server. Please check your network connection.');
+      //       console.error('No response received:', error.request);
+      //     } else {
+      //       // Something happened in setting up the request that triggered an Error
+      //       toast.error('Failed to save page: An unexpected error occurred.');
+      //       console.error('Axios config error:', error.message);
+      //     }
+      //   }
 
   };
-	const debounceTimeout = useRef();
 
-	useEffect(() => {
-		if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-		debounceTimeout.current = setTimeout(async () => {
-			try {
-				// Use publicApi for remote username check
-				const res = await publicApi.get(
-					`/api/check-page-exists/?title=${pageTitle}`
-				);
-				if (res.data.success != false) {
-					setPageTitleError("Page already exists. Choose a different page title.");
-				} else {
-					setPageTitleError("");
-				}
-			} catch {
-				setPageTitleError("");
-			}
-		}, 500);
-	}, [pageTitle]);
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form className="dynamic-page-form" onSubmit={handleSubmit(onSubmit)}>
+        <h3 className="mb-4">Add New Page</h3>
         {/* Page Title */}
         <div style={{ marginBottom: "1rem" }}>
           <label>Page Title</label>
@@ -163,6 +174,17 @@ async function uploadAndReplaceImages(sections, publicApi) {
 {pageTitleError &&
 						<span className="error">{pageTitleError}</span>}
             {errors.title && <p className="error">{errors.title.message}</p>}
+
+            <div style={{ marginBottom: "1rem" }}>
+          <label>Url Alias</label>
+          <div>
+            <span>page/</span>
+            <input {...register("slug")} placeholder="Enter url alias for page. Eg., about, xyz" onChange={(e) => setSlug(e.target.value)} />
+            </div>
+            {slugError &&
+						<span className="error">{slugError}</span>}
+            {errors.slug && <p className="error">{errors.slug.message}</p>}
+        </div>
         {/* Added Sections */}
         <div>
           {fields.map((field, index) => {
@@ -196,6 +218,7 @@ async function uploadAndReplaceImages(sections, publicApi) {
             ))}
           </select>
         </div>
+        {errors.sections && <p className="error">{errors.sections.message}</p>}
 
         <button type="submit" style={{ background: "green", color: "white", padding: "0.5rem 1rem" }}>
           💾 Save Page

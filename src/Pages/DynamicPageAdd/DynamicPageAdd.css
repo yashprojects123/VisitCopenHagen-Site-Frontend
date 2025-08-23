@@ -1,21 +1,13 @@
 /* styles.css */
 
-/* General page styles */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f8f9fa;
-  margin: 0;
-  padding: 2rem;
-  color: #333;
-}
-
+.dynamic-page-form{
 form {
-  max-width: 800px;
   margin: auto;
   background: #fff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width:100%;
 }
 
 /* Page title */
@@ -251,4 +243,5 @@ button.remove-btn:hover {
 
 .remove-icon:hover {
   background: #c82333;
+}
 }

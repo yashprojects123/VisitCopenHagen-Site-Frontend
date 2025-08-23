@@ -6,29 +6,51 @@ function ImageUploader({ name, sectionIndex, multiple = false, max = 1 }) {
   const { setValue, watch } = useFormContext();
   const inputRef = useRef(null);
 
-  // Watch current value from react-hook-form
-  const images = watch(`sections.${sectionIndex}.data.${name}`) || [];
+  // Watch form value
+  const formValue = watch(`sections.${sectionIndex}.data.${name}`) || [];
+
   const [previews, setPreviews] = useState([]);
 
+  // ✅ Sync backend default (urls) into previews
   useEffect(() => {
-    // Cleanup object URLs when component unmounts
+    if (Array.isArray(formValue)) {
+      // already normalized: array of {url, file?} OR backend {urls: []}
+      if (formValue.length && formValue[0]?.urls) {
+        // normalize backend shape → [{ url, file: null }]
+        const normalized = formValue[0].urls.map((u) => ({ url: u, file: null }));
+        setPreviews(normalized);
+        setValue(`sections.${sectionIndex}.data.${name}`, normalized);
+      } else if (formValue.length && formValue[0]?.url) {
+        // already normalized previews
+        setPreviews(formValue);
+      }
+    } else if (formValue?.urls) {
+      // single image with { urls: [...] }
+      const normalized = formValue.urls.map((u) => ({ url: u, file: null }));
+      setPreviews(normalized);
+      setValue(`sections.${sectionIndex}.data.${name}`, normalized);
+    }
+  }, [formValue, name, sectionIndex, setValue]);
+
+  // Cleanup object URLs
+  useEffect(() => {
     return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p.url));
+      previews.forEach((p) => {
+        if (p.file) URL.revokeObjectURL(p.url);
+      });
     };
   }, [previews]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
-    // Create preview URLs
     const newPreviews = files.map((file) => ({
       url: URL.createObjectURL(file),
       file,
     }));
 
-    let updated = multiple ? [...images, ...newPreviews] : newPreviews;
+    let updated = multiple ? [...previews, ...newPreviews] : newPreviews;
 
-    // Limit by max
     if (multiple && updated.length > max) {
       updated = updated.slice(0, max);
     }
@@ -36,7 +58,6 @@ function ImageUploader({ name, sectionIndex, multiple = false, max = 1 }) {
     setPreviews(updated);
     setValue(`sections.${sectionIndex}.data.${name}`, updated);
 
-    // Reset input so same file can be reselected if removed
     e.target.value = "";
   };
 
@@ -50,7 +71,6 @@ function ImageUploader({ name, sectionIndex, multiple = false, max = 1 }) {
 
   return (
     <div className="uploader-container">
-      {/* ✅ Hidden file input */}
       <input
         type="file"
         accept="image/*"
@@ -60,29 +80,24 @@ function ImageUploader({ name, sectionIndex, multiple = false, max = 1 }) {
         className="file-input-hidden"
       />
 
-      {/* ✅ Custom button */}
       <button
         type="button"
         className="choose-btn"
-        // disabled={isMaxReached}
-        onClick={(e) => {
-        
-          if (isMaxReached && multiple) {  
-            toast.error(`Maximum ${max} images allowed`);
-          }else if (isMaxReached && !multiple) {
-            toast.error("Maximum image reached");
-          }
-          else{
-             inputRef.current.click();
+        onClick={() => {
+          if (isMaxReached) {
+            toast.error(
+              multiple
+                ? `Maximum ${max} images allowed`
+                : "Maximum image reached"
+            );
+          } else {
+            inputRef.current.click();
           }
         }}
       >
-        {multiple
-          ? "Choose Images"
-          : "Choose Image"}
+        {multiple ? "Choose Images" : "Choose Image"}
       </button>
 
-      {/* ✅ Preview thumbnails */}
       <div className="preview-grid">
         {previews.map((img, idx) => (
           <div key={idx} className="preview-item">

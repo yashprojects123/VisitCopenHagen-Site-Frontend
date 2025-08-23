@@ -1,9 +1,9 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import ImageUploader from "../DynamicPageAdd/ImageUploader";
 import { DynamicSectionSchemas } from "../DynamicPageAdd/DynamicSectionSchemas";
-
+import "../DynamicPageAdd/DynamicPageAdd.css"
 function EditSectionRenderer({ section, index, remove, errors }) {
-  console.log(section)
+
   const { register, control, getValues } = useFormContext();
 
   // Schema definition from section type

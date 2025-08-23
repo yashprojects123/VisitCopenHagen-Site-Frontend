@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { getValidationSchema } from "../DynamicPageAdd/DynamicSectionSchemas";
+import { getValidationSchema, DynamicSectionSchemas } from "../DynamicPageAdd/DynamicSectionSchemas";
 import EditSectionRenderer from "./EditSectionRenderer"; 
 import { publicApi } from "../../Services/axiosInstance";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+
 function DynamicPageEdit() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [pageTitleError, setPageTitleError] = useState("");
+  const [newSlug, setNewSlug] = useState(slug);
+  const [newSlugError, setNewSlugError] = useState("");
+  const debounceTimeout = useRef();
 
   // RHF with yup validation
   const methods = useForm({
@@ -24,51 +28,30 @@ function DynamicPageEdit() {
 
   const { control, handleSubmit, reset } = methods;
 
-  // Allow dynamic sections
-  const { fields, remove } = useFieldArray({
+  // ✅ allow append and remove sections
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "sections",
   });
 
-  // Helper: upload and replace images
-  async function uploadAndReplaceImages(sections, publicApi) {
-    for (const section of sections) {
-      for (const [key, value] of Object.entries(section.data)) {
-        // multiple images
-        if (Array.isArray(value) && value.length && value[0]?.file) {
-          const formData = new FormData();
-          value.forEach((img) => formData.append("images", img.file));
-          const res = await publicApi.post("/api/upload-images", formData);
-          if (res.status === 200) {
-            section.data[key] = { urls: res.data.imageUrls, isNew: true };
-          }
+  // Slug validation (same as before)
+  useEffect(() => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      try {
+        const regexForSlug = /[^a-zA-Z0-9_-]/;
+        if (regexForSlug.test(newSlug)) {
+          setNewSlugError("No special allowed in url alias [use _ and - only]");
+        } else if (/[A-Z]/.test(newSlug)) {
+          setNewSlugError("Only lowercase letters allowed");
+        } else {
+          setNewSlugError("");
         }
-        // single image
-        else if (value?.file instanceof File) {
-          const formData = new FormData();
-          formData.append("images", value.file);
-          const res = await publicApi.post("/api/upload-images", formData);
-          if (res.status === 200) {
-            section.data[key] = { urls: res.data.imageUrls, isNew: true };
-          }
-        }
-        // array of objects (like columns)
-        else if (Array.isArray(value) && value.length && typeof value[0] === "object") {
-          for (const col of value) {
-            if (col.image?.file) {
-              const formData = new FormData();
-              formData.append("images", col.image.file);
-              const res = await publicApi.post("/api/upload-images", formData);
-              if (res.status === 200) {
-                col.image = { urls: res.data.imageUrls, isNew: true };
-              }
-            }
-          }
-        }
+      } catch {
+        setNewSlugError("");
       }
-    }
-    return sections;
-  }
+    }, 500);
+  }, [newSlug]);
 
   // Fetch existing page
   useEffect(() => {
@@ -80,51 +63,103 @@ function DynamicPageEdit() {
         if (data.success) {
           reset({
             title: data.page.title,
+            slug: data.page.slug,
             sections: data.page.sections || [],
           });
         }
       } catch (err) {
         toast.error("Failed to fetch page");
-      setTimeout(()=>{ navigate('/')},1200)
-        // console.error(err);
+        setTimeout(() => navigate("/"), 1200);
       } finally {
         setLoading(false);
       }
     };
     fetchPage();
-  }, [slug, reset]);
+  }, [slug, reset, navigate]);
+
+  // ---- Upload & Replace Images ---- (same as before)
+  async function uploadAndReplaceImages(sections, publicApi) {
+  async function processValue(value) {
+    // Case 1: New single file
+    if (value?.file instanceof File) {
+      const formData = new FormData();
+      formData.append("images", value.file);
+      const res = await publicApi.post("/api/upload-images", formData);
+      return { urls: res.data.imageUrls, isNew: true };
+    }
+
+    // Case 2: Existing image object with real URL
+    if (value?.url && !value.url.startsWith("blob:")) {
+      return { urls: [value.url], isNew: false };
+    }
+
+    // Case 3: Array of images
+    if (Array.isArray(value)) {
+      // If it's an array of objects/images
+      const processed = [];
+      for (const item of value) {
+        processed.push(await processValue(item));
+      }
+
+      // flatten image objects (with urls) if it's clearly an image array
+      if (processed.length && processed[0]?.urls) {
+        return {
+          urls: processed.flatMap((img) => img.urls),
+          isNew: processed.some((img) => img.isNew),
+        };
+      }
+      return processed; // otherwise it's a nested array (like columns)
+    }
+
+    // Case 4: Nested object (e.g. columns, subforms)
+    if (value && typeof value === "object") {
+      const newObj = {};
+      for (const [k, v] of Object.entries(value)) {
+        newObj[k] = await processValue(v);
+      }
+      return newObj;
+    }
+
+    // Default: return as is
+    return value;
+  }
+
+  // Process each section
+  for (const section of sections) {
+    section.data = await processValue(section.data);
+  }
+
+  return sections;
+}
+
 
   // Submit handler
   const onSubmit = async (formData) => {
     try {
-      if (!formData.title || formData.title.trim() === "") {
+      if (!formData.title?.trim()) {
         toast.error("Page title is required.");
         return;
       }
+      if (newSlugError) {
+        toast.error("Url Alias Error: " + newSlugError);
+        return;
+      }
 
-      const processedSections = await uploadAndReplaceImages(
-        formData.sections,
-        publicApi
-      );
+      const processedSections = await uploadAndReplaceImages(formData.sections, publicApi);
 
       const finalData = {
-        title: formData.title,
-        slug: slug, // keep same slug
+        title: formData.title.trim(),
+        slug,
         sections: processedSections,
       };
 
-      const response = await publicApi.put(
-        `/api/update-page/${slug}`,
-        finalData
-      );
+      const response = await publicApi.put(`/api/update-page/${slug}`, finalData);
 
       if (response.data.success) {
         toast.success("✅ Page updated successfully!");
-        setTimeout(() => {
-          navigate(`/pages/${slug}`);
-        }, 1200);
+        setTimeout(() => navigate(`/page/${slug}`), 1200);
       } else {
-        toast.error("❌ Error updating page: " + response.data.message);
+        toast.error("❌ " + (response.data.message || "Error updating page"));
       }
     } catch (err) {
       console.error("Update failed:", err);
@@ -136,20 +171,26 @@ function DynamicPageEdit() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="page-form">
+      <form className="dynamic-page-form"  onSubmit={handleSubmit(onSubmit)} className="page-form">
+        <h3 className="mb-4">Edit Page</h3>
         <div className="form-group">
           <label>Page Title</label>
-          <input
-            type="text"
-            {...methods.register("title")}
-            className="form-input"
-          />
+          <input type="text" {...methods.register("title")} className="form-input" />
           {methods.formState.errors.title && (
             <p className="error-text">{methods.formState.errors.title.message}</p>
           )}
         </div>
 
-        {/* Render dynamic sections with EditSectionRenderer */}
+        <div className="form-group">
+          <label>Url Alias</label>
+          <div>
+            <span>page/</span>
+            <input {...methods.register("slug")} onChange={(e) => setNewSlug(e.target.value)} />
+          </div>
+          {newSlugError && <span className="error">{newSlugError}</span>}
+        </div>
+
+        {/* Existing Sections */}
         {fields.map((field, index) => (
           <EditSectionRenderer
             key={field.id}
@@ -160,10 +201,28 @@ function DynamicPageEdit() {
           />
         ))}
 
+        {/* ✅ Add Section Dropdown */}
+        <div style={{ margin: "1rem 0" }}>
+          <label>Add Section</label>
+          <select
+            onChange={(e) => {
+              if (e.target.value) {
+                append({ type: e.target.value, data: {} });
+                e.target.value = "";
+              }
+            }}
+          >
+            <option value="">-- Select Section Type --</option>
+            {Object.entries(DynamicSectionSchemas).map(([key, schema]) => (
+              <option key={key} value={key}>
+                {schema.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Save Changes
-          </button>
+          <button type="submit" className="btn-primary">Update</button>
         </div>
       </form>
     </FormProvider>
