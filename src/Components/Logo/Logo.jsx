@@ -15,6 +15,7 @@ const Logo = () => {
 		siteSettings && siteSettings.siteLogoUrl
 			? siteSettings.siteLogoUrl
 			: logoImage;
+			console.log(siteSettings);
 	return (
 		<Link
 			to='/'

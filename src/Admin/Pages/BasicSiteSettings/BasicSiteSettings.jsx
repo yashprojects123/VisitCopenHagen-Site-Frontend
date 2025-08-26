@@ -125,6 +125,7 @@ const BasicSiteSettings = () => {
 					// use backend-provided URL
 					logoUrl = settingsSaveResponse.data.siteLogoUrl;
 				}
+		
 				setSiteSettings({
 					siteName: data.siteName || "",
 					siteLogoUrl: logoUrl || null,

@@ -8,4 +8,5 @@ header.admin-header {
     display: flex;
     justify-content: space-between;
     padding-right: 3rem;
+    z-index: 1000;
 }

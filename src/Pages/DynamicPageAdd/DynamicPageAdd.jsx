@@ -177,7 +177,7 @@ async function uploadAndReplaceImages(sections, publicApi) {
 
             <div style={{ marginBottom: "1rem" }}>
           <label>Url Alias</label>
-          <div>
+          <div className="url-alias-wrapper">
             <span>page/</span>
             <input {...register("slug")} placeholder="Enter url alias for page. Eg., about, xyz" onChange={(e) => setSlug(e.target.value)} />
             </div>

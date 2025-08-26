@@ -171,7 +171,7 @@ function DynamicPageEdit() {
 
   return (
     <FormProvider {...methods}>
-      <form className="dynamic-page-form"  onSubmit={handleSubmit(onSubmit)} className="page-form">
+      <form className="dynamic-page-form"  onSubmit={handleSubmit(onSubmit)}>
         <h3 className="mb-4">Edit Page</h3>
         <div className="form-group">
           <label>Page Title</label>
@@ -181,9 +181,9 @@ function DynamicPageEdit() {
           )}
         </div>
 
-        <div className="form-group">
+        <div className="form-group ">
           <label>Url Alias</label>
-          <div>
+          <div className="url-alias-wrapper">
             <span>page/</span>
             <input {...methods.register("slug")} onChange={(e) => setNewSlug(e.target.value)} />
           </div>
