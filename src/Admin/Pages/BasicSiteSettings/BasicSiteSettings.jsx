@@ -117,7 +117,7 @@ const BasicSiteSettings = () => {
 			);
 			if (settingsSaveResponse.data != null) {
 				toast.success("Settings saved successfully!", { icon: "🎉" });
-				let logoUrl = siteSettings.siteLogoUrl; // fallback to existing
+				let logoUrl = siteSettings.siteLogoUrl; 
 				if (data.siteLogo && data.siteLogo.length > 0) {
 					// create temporary preview
 					logoUrl = URL.createObjectURL(data.siteLogo[0]);

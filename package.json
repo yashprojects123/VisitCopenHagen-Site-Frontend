@@ -15,6 +15,7 @@
     "bootstrap": "^5.3.7",
     "framer-motion": "^12.23.12",
     "html-react-parser": "^5.2.6",
+    "install": "^0.13.0",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-awesome-reveal": "^4.3.1",

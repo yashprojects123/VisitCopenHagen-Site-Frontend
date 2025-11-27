@@ -48,7 +48,6 @@ const Homepage = () => {
   }
 fetchHomepageContent()
 },[]);
-const sections = Array.isArray(pageData?.data?.sections) ? pageData.data.sections : [];
 
   let descriptionTexts = [
     `<p>The buzzing capital of Denmark mixes <a className="link-internal" data-entity-type="node" data-entity-uuid="3d82ffe2-afd3-46f9-9abe-ba9aa0159c3a" data-entity-substitution="canonical" title="Experience world-class modern architecture" href="/copenhagen/activities/experience-world-class-architecture-and-design">modern architecture</a> and <a className="link-internal" data-entity-type="node" data-entity-uuid="4afafbe9-735f-476f-bf98-9cdda4dd6740" data-entity-substitution="canonical" title="See and do" href="/copenhagen/activities/see-and-do">culture </a>with <a className="link-internal" data-entity-type="node" data-entity-uuid="8c5c1a23-45b4-496b-b270-b86745baac23" data-entity-substitution="canonical" title="A sustainability guide to Copenhagen" href="/copenhagen/activities/green-sustainability-guide">sustainable living</a>, <a className="link-internal" data-entity-type="node" data-entity-uuid="01642282-dd53-4812-99a4-cdb44c2429f7" data-entity-substitution="canonical" title="The royal and historic Copenhagen" href="/copenhagen/activities/royal-and-historic-copenhagen">royal history</a>, and a mouthwatering <a className="link-internal" data-entity-type="node" data-entity-uuid="88b8db61-c17f-43b4-a519-e9dc5ebe9884" data-entity-substitution="canonical" title="Restaurants in Copenhagen" href="/best-restaurants-copenhagen">restaurant scene</a>. Get to know the city, do your planning, and find all your questions answered right here.</p>`,
@@ -59,11 +58,8 @@ const sections = Array.isArray(pageData?.data?.sections) ? pageData.data.section
   return (
     <div className="homepage-content">
 <div className="sections">
-  {sections &&
-    sections.map(({ type, data }, index) =>
-      type === 'banner' ? (
+
         <Suspense
-          key={index}
           fallback={
             <div className="skeleton-banner">
               <div className="container">
@@ -77,15 +73,15 @@ const sections = Array.isArray(pageData?.data?.sections) ? pageData.data.section
         >
           <Banner
             className="homepage-banner"
-            mainTitle={data.topic}
-            caption={data.caption}
-            subTitle={data.subTopic}
-            descriptionTexts={data.description}
-            images={data.images.urls}
+            mainTitle="Get to know Copenhagen, the capital of Denmark"
+            caption="Thomas Høyrup Christensen & Daniel Rasmussen"
+            subTitle="Your guide to the perfect Copenhagen experience"
+            descriptionTexts={descriptionTexts}
+            images={[image1, image2]}
           />
         </Suspense>
-      ):null
-    )
+      
+    
   }
 </div>
       
