@@ -50,7 +50,14 @@
   border-color: #dc3545; /* Red color */
   animation: shake 0.3s; /* A subtle shake effect */
 }
-
+.remember-me-group label {
+    display: flex !important;
+    align-items: center;
+		input[type='checkbox']{
+			margin-right: 5px;
+			background-color: #fff !important;
+		}
+}
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);

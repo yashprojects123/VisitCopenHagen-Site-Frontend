@@ -97,7 +97,7 @@ const Routes = ({ children }) => {
         },
      {
           path: '/admin',
-          element: <AdminRoute><AdminDashboard /></AdminRoute>, // 👈 Wrap the parent element here
+          element: <AdminRoute><AdminDashboard /></AdminRoute>, 
           children: [
             {
               index: true,
@@ -139,7 +139,7 @@ const Routes = ({ children }) => {
             },
             {
               path: 'main-navigation-bottom/edit',
-              element: <MenuUpdate menuTitle="Main Navigation Bottom" />, // 👈 Remove the wrapper here
+              element: <MenuUpdate menuTitle="Main Navigation Bottom" />,
               loader: async () => {
                 let menuGetResponse = getMenuData("Main Navigation Bottom");
                 return menuGetResponse;
